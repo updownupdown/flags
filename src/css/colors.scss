@@ -1,0 +1,33 @@
+$white: white;
+
+$base: #d4dae0;
+
+$K50: lighten($base, 12%);
+$K100: lighten($base, 10%);
+$K150: lighten($base, 7.5%);
+$K200: lighten($base, 5%);
+$K250: lighten($base, 2.5%);
+$K300: $base;
+$K350: darken($base, 5%);
+$K400: darken($base, 10%);
+$K450: darken($base, 17%);
+$K500: darken($base, 25%);
+$K550: darken($base, 28%);
+$K600: darken($base, 30%);
+$K650: darken($base, 40%);
+$K700: darken($base, 50%);
+$K750: darken($base, 58%);
+$K800: darken($base, 65%);
+$K900: darken($base, 75%);
+
+$yellow: #ffc107;
+$yellow-hover: darken($yellow, 15%);
+
+$green: #1fc7b6;
+$green-hover: darken($green, 10%);
+
+$blue: #4455e9;
+$blue-hover: darken($blue, 20%);
+
+$red: #bf1125;
+$red-hover: darken($red, 15%);
