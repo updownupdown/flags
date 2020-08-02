@@ -79,17 +79,22 @@ function AnswerFlag(props) {
         </div>
       )}
 
-      <hr />
-
-      <h1>Info</h1>
-
-      <ul className="info">
-        {props.answer.name && <li>Name: {props.answer.name}</li>}
-        {props.answer.capital && <li>Capital: {props.answer.capital}</li>}
-      </ul>
-
-      <div className="flag flag-info">
-        <Flag code={props.answer.code.iso2} />
+      <div className="info">
+        <div className="info-text">
+          {props.answer.name && (
+            <span className="info-name">{props.answer.name}</span>
+          )}
+          {props.answer.capital && (
+            <span className="info-capital">
+              Capital: {props.answer.capital}
+            </span>
+          )}
+        </div>
+        <div className="info-flag">
+          <div className="flag">
+            <Flag code={props.answer.code.iso2} />
+          </div>
+        </div>
       </div>
 
       <div className="button-group">

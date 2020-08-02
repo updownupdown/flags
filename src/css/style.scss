@@ -122,10 +122,6 @@ body {
     width: 300px;
     height: auto;
   }
-
-  &-info {
-    width: 200px;
-  }
 }
 
 // Question: Flag
@@ -197,11 +193,10 @@ body {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
-  margin-top: -10px;
+  margin-top: -20px;
   padding: 10px 20px;
 
   border-radius: 12px;
-  border: 1px solid $red;
   background: rgba($red, 0.05);
 
   &-text {
@@ -212,6 +207,36 @@ body {
 
   .flag {
     width: 100px;
-    height: 70px;
+    height: 50px;
+  }
+}
+
+// Info
+.info {
+  display: flex;
+  margin-top: 40px;
+
+  color: $K900;
+
+  &-text {
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+    padding-right: 40px;
+  }
+
+  &-name {
+    margin-bottom: 12px;
+    font-size: 38px;
+    font-weight: 700;
+  }
+  &-capital {
+    font-size: 18px;
+    font-weight: 500;
+  }
+
+  &-flag {
+    width: 50%;
+    height: 200px;
   }
 }
