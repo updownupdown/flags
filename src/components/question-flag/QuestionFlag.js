@@ -29,8 +29,8 @@ function QuestionFlag(props) {
       <div className="question-flag">
         <div className="flag">
           <Flag code={props.answer.code.iso2} />
-          {/* <p>{props.answer.name}</p> */}
         </div>
+        <p>{props.answer.name}</p>
       </div>
 
       <Autocomplete
