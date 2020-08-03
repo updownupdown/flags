@@ -1,0 +1,33 @@
+@import "../../css/vars.scss";
+
+// Header
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 0;
+
+  .logo {
+    margin-right: auto;
+
+    font-size: 16px;
+    font-weight: 600;
+    color: $K800;
+  }
+  a {
+    margin-left: 20px;
+
+    font-size: 14px;
+    font-weight: 500;
+    color: $K600;
+    text-decoration: none;
+
+    &.active {
+      display: none;
+    }
+
+    &:hover {
+      color: $blue;
+    }
+  }
+}

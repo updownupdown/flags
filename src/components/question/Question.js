@@ -1,42 +1,103 @@
 import React, { useState, useEffect } from "react";
+import { useLocallyPersistedReducer } from "../../utils/LocalStorage";
+import country from "country-list-js";
 import Flag from "react-world-flags";
+import QuestionHeader from "./QuestionHeader";
+import Score from "./Score";
 
-export const QuestionHeader = (props) => {
-  const contents = () => {
-    switch (props.questionType) {
-      case "name":
-        return (
-          <div className="flag">
-            <Flag code={props.answer.code.iso2} />
-          </div>
-        );
-      case "flag":
-        return <span className="country-name">{props.answer.name}</span>;
+function Question(props) {
+  const defaultScore = {
+    correct: 0,
+    incorrect: 0,
+    streakCurrent: 0,
+    streakLongest: 0,
+    lastCorrect: false,
+  };
+
+  const [score, setScore] = useLocallyPersistedReducer(
+    scoreReducer,
+    defaultScore,
+    "score"
+  );
+
+  function scoreReducer(score, action) {
+    switch (action.type) {
+      case "reset":
+        return defaultScore;
+      case "correct":
+        return {
+          ...score,
+          correct: score.correct + 1,
+          lastCorrect: true,
+          streakCurrent: score.streakCurrent + 1,
+          streakLongest:
+            score.streakCurrent >= score.streakLongest
+              ? score.streakCurrent + 1
+              : score.streakLongest,
+        };
+      case "incorrect":
+        return {
+          ...score,
+          incorrect: score.incorrect + 1,
+          lastCorrect: false,
+          streakCurrent: 0,
+        };
       default:
         throw new Error();
     }
-  };
+  }
 
-  return (
-    <div className="question">
-      <span className="instructions">
-        {props.questionType === "flag" && "Which flag belongs to:"}
-        {props.questionType === "name" && "Which country has this flag:"}
-      </span>
-      {contents()}
-    </div>
-  );
-};
+  const countriesList = country.ls("name").sort();
+  const countriesLength = countriesList.length;
 
-function Question(props) {
+  function getRandCountry() {
+    const randCountry = country.findByName(
+      countriesList[Math.floor(Math.random() * (countriesLength - 1))]
+    );
+
+    return randCountry;
+  }
+
+  const [questionType, setQuestionType] = useState("flag");
+  const [guess, setGuess] = useState("");
+  const [answer, setAnswer] = useState(getRandCountry);
+  const [isQuestion, setIsQuestion] = useState(true);
+
+  function makeGuess(userGuess) {
+    setGuess(userGuess);
+    setIsQuestion(false);
+
+    if (userGuess === answer.name) {
+      setScore({ type: "correct" });
+    } else {
+      setScore({ type: "incorrect" });
+    }
+  }
+
+  function getNextType(previousType) {
+    var nextType = "flag";
+
+    if (previousType === "flag") {
+      nextType = "name";
+    }
+
+    return nextType;
+  }
+
+  function nextQuestion() {
+    setAnswer(getRandCountry);
+    setQuestionType(getNextType(questionType));
+    setIsQuestion(true);
+  }
+
   const [options, setOptions] = useState([]);
 
   useEffect(() => {
-    if (!props.isQuestion) return;
-    var array = [props.answer];
+    if (!isQuestion) return;
+    var array = [answer];
 
     while (array.length < 6) {
-      const randCountry = props.getRandCountry();
+      const randCountry = getRandCountry();
 
       if (!array.includes(randCountry)) {
         array.push(randCountry);
@@ -44,7 +105,7 @@ function Question(props) {
     }
 
     setOptions(shuffleArray(array));
-  }, [props.isQuestion]);
+  }, [isQuestion]);
 
   function shuffleArray(array) {
     let i = array.length - 1;
@@ -74,27 +135,22 @@ function Question(props) {
     if (checkFocus()) return;
 
     if (e.key === "Enter") {
-      if (!props.isQuestion) {
-        props.nextQuestion();
+      if (!isQuestion) {
+        nextQuestion();
       }
     }
   };
 
   function getButtonClass(option) {
     var buttonClass = "option";
-    if (option === props.answer.name) {
-      // Correct answer
-      if (props.guess === props.answer.name) {
-        // Guessed
+    if (option === answer.name) {
+      if (guess === answer.name) {
         buttonClass += " correct-guessed";
       } else {
-        // Got wrong
         buttonClass += " correct-not-guessed";
       }
     } else {
-      // Incorrect answer
-      if (option === props.guess) {
-        // Guessed
+      if (option === guess) {
         buttonClass += " incorrect-guess";
       } else {
         buttonClass += " other";
@@ -106,21 +162,29 @@ function Question(props) {
 
   return (
     <>
-      <QuestionHeader answer={props.answer} questionType={props.questionType} />
+      <Score
+        answer={answer}
+        score={score}
+        setScore={setScore}
+        guess={guess}
+        isQuestion={isQuestion}
+      />
 
-      <div className={`button-group options-${props.questionType}`}>
+      <QuestionHeader answer={answer} questionType={questionType} />
+
+      <div className={`button-group options-${questionType}`}>
         {options.map((option) => (
           <button
-            disabled={!props.isQuestion}
+            disabled={!isQuestion}
             key={option.name}
             tabIndex={0}
             className={getButtonClass(option.name)}
             onClick={() => {
-              props.makeGuess(option.name);
+              makeGuess(option.name);
             }}
           >
-            {props.questionType === "name" && option.name}
-            {props.questionType === "flag" && (
+            {questionType === "name" && option.name}
+            {questionType === "flag" && (
               <div className="flag">
                 <Flag code={option.code.iso2} />
               </div>
@@ -130,11 +194,11 @@ function Question(props) {
       </div>
 
       <button
-        disabled={props.isQuestion}
+        disabled={isQuestion}
         tabIndex={0}
         className="next-question"
         onClick={() => {
-          props.nextQuestion();
+          nextQuestion();
         }}
       >
         Next Question
