@@ -1,38 +1,33 @@
-import React, { useState, useEffect, useRef } from "react";
-import Autocomplete from "../autocomplete/Autocomplete";
+import React, { useEffect } from "react";
 import Flag from "react-world-flags";
 
 function QuestionFlag(props) {
-  const [validGuess, setValidGuess] = useState(false);
-  const [guess, setGuess] = useState("");
-
-  useEffect(() => {
-    checkValidGuess();
-  }, [guess]);
-
-  useEffect(() => {
-    checkValidGuess();
-  }, [guess]);
-
-  function checkValidGuess() {
-    if (props.countriesList.includes(guess)) {
-      setValidGuess(true);
-    } else {
-      setValidGuess(false);
+  function shuffleArray(array) {
+    let i = array.length - 1;
+    for (; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      const temp = array[i];
+      array[i] = array[j];
+      array[j] = temp;
     }
+    return array;
   }
 
-  function activateGuess() {
-    props.makeGuess(guess);
-  }
+  const options = () => {
+    var array = [props.answer];
 
-  const answerButton = useRef(null);
+    while (array.length < 6) {
+      const randCountry = props.getRandCountry();
 
-  function readyToAnswer() {
-    answerButton.current.focus();
-    console.log(answerButton.current);
-    console.log("focused on button");
-  }
+      if (!array.includes(randCountry)) {
+        array.push(randCountry);
+      }
+    }
+
+    return shuffleArray(array);
+  };
+
+  const shuffledOptions = options();
 
   return (
     <>
@@ -40,36 +35,22 @@ function QuestionFlag(props) {
         <div className="flag">
           <Flag code={props.answer.code.iso2} />
         </div>
-        {/* <p>{props.answer.name}</p> */}
       </div>
 
-      <Autocomplete
-        options={props.countriesList}
-        setGuess={setGuess}
-        checkValidGuess={checkValidGuess}
-        activateGuess={activateGuess}
-      />
-
       <div className="button-group">
-        <button
-          tabIndex={0}
-          className="answer"
-          onClick={() => {
-            activateGuess();
-          }}
-          disabled={!validGuess}
-        >
-          Answer {guess}
-        </button>
-        <button
-          tabIndex={0}
-          className="pass"
-          onClick={() => {
-            props.makeGuess("");
-          }}
-        >
-          Pass
-        </button>
+        {shuffledOptions.map((option) => (
+          <button
+            key={option.name}
+            tabIndex={0}
+            className="option"
+            onClick={() => {
+              console.log(option.name);
+              props.makeGuess(option.name);
+            }}
+          >
+            {option.name}
+          </button>
+        ))}
       </div>
     </>
   );

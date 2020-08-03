@@ -130,6 +130,7 @@ function App() {
         <div className="layout-bottom">
           {isQuestion ? (
             <QuestionFlag
+              getRandCountry={getRandCountry}
               countriesList={countriesList}
               answer={answer}
               makeGuess={makeGuess}
