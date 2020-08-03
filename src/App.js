@@ -73,13 +73,11 @@ function App() {
   const [isQuestion, setIsQuestion] = useState(true);
 
   function makeGuess(guess) {
-    console.log("Making a guess");
     setGuess(guess);
     setIsQuestion(false);
   }
 
   function nextQuestion() {
-    console.log("Moving to next question...");
     setAnswer(getRandCountry);
     setIsQuestion(true);
   }
@@ -103,8 +101,12 @@ function App() {
             <div className="score-top">
               <span className="score-perc">Score: {getScorePerc()}%</span>
               <div className="score-tally">
-                <span className="score-tally-correct">{score.correct}</span>
-                <span className="score-tally-incorrect">{score.incorrect}</span>
+                <span className="score-tally-correct">
+                  Correct: {score.correct}
+                </span>
+                <span className="score-tally-incorrect">
+                  Incorrect: {score.incorrect}
+                </span>
               </div>
             </div>
             <div className="score-bottom">

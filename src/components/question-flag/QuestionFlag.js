@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Autocomplete from "../autocomplete/Autocomplete";
 import Flag from "react-world-flags";
 
@@ -10,8 +10,11 @@ function QuestionFlag(props) {
     checkValidGuess();
   }, [guess]);
 
+  useEffect(() => {
+    checkValidGuess();
+  }, [guess]);
+
   function checkValidGuess() {
-    console.log("checked valid guess: " + guess);
     if (props.countriesList.includes(guess)) {
       setValidGuess(true);
     } else {
@@ -19,36 +22,48 @@ function QuestionFlag(props) {
     }
   }
 
+  function activateGuess() {
+    props.makeGuess(guess);
+  }
+
+  const answerButton = useRef(null);
+
+  function readyToAnswer() {
+    answerButton.current.focus();
+    console.log(answerButton.current);
+    console.log("focused on button");
+  }
+
   return (
     <>
-      <h1>Guess the flag!</h1>
-
-      <h3>Guess = {guess}</h3>
-      <h3>Valid Guess? = {validGuess ? "yes" : "no"}</h3>
-
       <div className="question-flag">
         <div className="flag">
           <Flag code={props.answer.code.iso2} />
         </div>
-        <p>{props.answer.name}</p>
+        {/* <p>{props.answer.name}</p> */}
       </div>
 
       <Autocomplete
         options={props.countriesList}
         setGuess={setGuess}
         checkValidGuess={checkValidGuess}
+        activateGuess={activateGuess}
       />
 
       <div className="button-group">
         <button
+          tabIndex={0}
+          className="answer"
           onClick={() => {
-            props.makeGuess(guess);
+            activateGuess();
           }}
           disabled={!validGuess}
         >
           Answer {guess}
         </button>
         <button
+          tabIndex={0}
+          className="pass"
           onClick={() => {
             props.makeGuess("");
           }}

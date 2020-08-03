@@ -49,13 +49,17 @@ export class Autocomplete extends Component {
     const { activeOption, filteredOptions } = this.state;
 
     if (e.keyCode === 13) {
-      this.setState({
-        activeOption: 0,
-        showOptions: false,
-        userInput: filteredOptions[activeOption],
-      });
-      this.props.setGuess(filteredOptions[activeOption]);
-      this.props.checkValidGuess();
+      if (this.state.showOptions) {
+        this.setState({
+          activeOption: 0,
+          showOptions: false,
+          userInput: filteredOptions[activeOption],
+        });
+        this.props.setGuess(filteredOptions[activeOption]);
+        this.props.checkValidGuess();
+      } else {
+        this.props.activateGuess();
+      }
     } else if (e.keyCode === 38) {
       if (activeOption === 0) {
         return;
@@ -97,11 +101,7 @@ export class Autocomplete extends Component {
           </ul>
         );
       } else {
-        optionList = (
-          <div className="no-options">
-            <em>No Option!</em>
-          </div>
-        );
+        optionList = <span className="no-options">No matches found.</span>;
       }
     }
 
@@ -109,13 +109,13 @@ export class Autocomplete extends Component {
       <>
         <div className="search">
           <input
+            autoFocus
             type="text"
             className="search-box"
             onChange={onChange}
             onKeyDown={onKeyDown}
             value={userInput}
           />
-          <input type="submit" value="" className="search-btn" />
           {optionList}
         </div>
       </>

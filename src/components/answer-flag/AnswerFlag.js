@@ -15,11 +15,9 @@ function AnswerFlag(props) {
     }
   }, []);
 
-  console.log(props.answer);
-
   function guessedFlag() {
     const guessedCountry = country.findByName(props.guess);
-    console.log("code = " + guessedCountry.code.iso2);
+
     return (
       <div className="flag flag-guess">
         <Flag code={guessedCountry.code.iso2} />
@@ -57,6 +55,27 @@ function AnswerFlag(props) {
 
     return message;
   }
+
+  function checkFocus() {
+    const activeElement = document.activeElement;
+    const inputs = ["button", "input", "select", "textarea"];
+
+    if (
+      activeElement &&
+      inputs.indexOf(activeElement.tagName.toLowerCase()) !== -1
+    ) {
+      return true;
+    }
+  }
+
+  document.body.onkeydown = function (e) {
+    // Bail if something important is focused
+    if (checkFocus()) return;
+
+    if (e.key === "Enter") {
+      props.nextQuestion();
+    }
+  };
 
   return (
     <>

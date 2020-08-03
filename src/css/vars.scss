@@ -7,6 +7,7 @@ $font: "Roboto", sans-serif;
 // Box Shadow
 $boxShadow300: 1px 2px 10px rgba($K400, 0.2);
 $boxShadow500: 1px 2px 10px rgba($K400, 0.2), 2px 6px 25px rgba($K400, 0.3);
+$boxShadowFocus: 0 0 0 6px rgba($blue, 0.3);
 
 // Media query breakpoints
 $break-sm: 576px;
