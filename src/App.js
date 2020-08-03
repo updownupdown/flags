@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Switch } from "react-router-dom";
 import Header from "./components/header/Header";
 import Question from "./components/question/Question";
 import Study from "./components/study/Study";
+import "./css/style.scss";
 
 function App() {
   return (

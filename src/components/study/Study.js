@@ -1,6 +1,7 @@
 import React from "react";
 import country from "country-list-js";
 import Flag from "react-world-flags";
+import "./study.scss";
 
 const Study = (props) => {
   const countriesList = country.ls("name").sort();
