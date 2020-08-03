@@ -2,10 +2,6 @@ import React from "react";
 import { NavLink } from "react-router-dom";
 
 const Header = (props) => {
-  const path = window.location.pathname;
-
-  console.log(path);
-
   return (
     <div className="header">
       <span className="logo">World Flags Quiz</span>

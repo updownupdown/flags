@@ -6,7 +6,7 @@ import Study from "./components/study/Study";
 
 function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={"/flags"}>
       <div className="layout">
         <div className="layout-center">
           <div className="layout-top">
