@@ -1,10 +1,7 @@
 import React, { useState } from "react";
 import { useLocallyPersistedReducer } from "./utils/LocalStorage";
-// import Autocomplete from "./components/autocomplete/Autocomplete";
-// import Flag from "react-world-flags";
 import country from "country-list-js";
-import QuestionFlag from "./components/question-flag/QuestionFlag";
-import AnswerFlag from "./components/answer-flag/AnswerFlag";
+import Question from "./components/question/Question";
 
 function App() {
   const defaultScore = {
@@ -50,8 +47,8 @@ function App() {
 
   function getScorePerc() {
     const perc =
-      score.correct === 0 && score.correct === 0
-        ? 0
+      score.correct === 0 && score.incorrect === 0
+        ? 50
         : Math.round((score.correct / (score.correct + score.incorrect)) * 100);
     return perc.toString();
   }
@@ -68,17 +65,35 @@ function App() {
     return randCountry;
   }
 
+  const [questionType, setQuestionType] = useState("flag");
   const [guess, setGuess] = useState("");
   const [answer, setAnswer] = useState(getRandCountry);
   const [isQuestion, setIsQuestion] = useState(true);
 
-  function makeGuess(guess) {
-    setGuess(guess);
+  function makeGuess(userGuess) {
+    setGuess(userGuess);
     setIsQuestion(false);
+
+    if (userGuess === answer.name) {
+      setScore({ type: "correct" });
+    } else {
+      setScore({ type: "incorrect" });
+    }
+  }
+
+  function getNextType(previousType) {
+    var nextType = "flag";
+
+    if (previousType === "flag") {
+      nextType = "name";
+    }
+
+    return nextType;
   }
 
   function nextQuestion() {
     setAnswer(getRandCountry);
+    setQuestionType(getNextType(questionType));
     setIsQuestion(true);
   }
 
@@ -100,16 +115,39 @@ function App() {
           <div className="score">
             <div className="score-top">
               <span className="score-perc">Score: {getScorePerc()}%</span>
-              <div className="score-tally">
-                <span className="score-tally-correct">
-                  Correct: {score.correct}
+              <span className="score-bar">
+                <span
+                  className={`score-bar-result correct ${
+                    !isQuestion &&
+                    guess !== "" &&
+                    guess === answer.name &&
+                    "highlight"
+                  }`}
+                  style={{ width: `${getScorePerc()}%` }}
+                >
+                  <span className="score-bar-result-count">
+                    {score.correct}
+                  </span>
                 </span>
-                <span className="score-tally-incorrect">
-                  Incorrect: {score.incorrect}
+                <span
+                  className={`score-bar-result incorrect ${
+                    !isQuestion &&
+                    guess !== "" &&
+                    guess !== answer.name &&
+                    "highlight"
+                  }`}
+                  style={{ width: `${100 - getScorePerc()}%` }}
+                >
+                  <span className="score-bar-result-count">
+                    {score.incorrect}
+                  </span>
                 </span>
-              </div>
+              </span>
             </div>
             <div className="score-bottom">
+              <span className="score-tally">
+                Correct: {score.correct} / {score.correct + score.incorrect}
+              </span>
               <span className="score-streak-current">
                 Current streak: {score.streakCurrent}
               </span>
@@ -128,21 +166,16 @@ function App() {
           </div>
         </div>
         <div className="layout-bottom">
-          {isQuestion ? (
-            <QuestionFlag
-              getRandCountry={getRandCountry}
-              countriesList={countriesList}
-              answer={answer}
-              makeGuess={makeGuess}
-            />
-          ) : (
-            <AnswerFlag
-              guess={guess}
-              answer={answer}
-              setScore={setScore}
-              nextQuestion={nextQuestion}
-            />
-          )}
+          <Question
+            questionType={questionType}
+            getRandCountry={getRandCountry}
+            countriesList={countriesList}
+            answer={answer}
+            guess={guess}
+            makeGuess={makeGuess}
+            isQuestion={isQuestion}
+            nextQuestion={nextQuestion}
+          />
         </div>
       </div>
     </div>

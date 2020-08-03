@@ -1,6 +1,8 @@
 @import "./vars.scss";
 
 body {
+  margin: 0;
+  padding: 0;
   background: $K100;
   font-family: $headingFont;
 }
@@ -76,7 +78,8 @@ button {
   &-top {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 12px;
+    align-items: center;
+    margin-bottom: 30px;
   }
 
   // Percentage
@@ -86,33 +89,108 @@ button {
     color: $K800;
   }
 
-  // Tally
-  &-tally {
-    font-size: 16px;
-    font-weight: 500;
-
-    &-correct {
-      margin-right: 20px;
-      color: $green;
+  @mixin glow($color, $colorName) {
+    @keyframes glow-#{$colorName} {
+      0% {
+        box-shadow: 0 0 0 $color;
+      }
+      50% {
+        box-shadow: 0 0 4px 2px $color;
+      }
+      100% {
+        box-shadow: 0 0 0 $color;
+      }
     }
-    &-incorrect {
-      color: $red;
+  }
+
+  @include glow($red, "red");
+  @include glow($green, "green");
+
+  // Bar
+  &-bar {
+    $bar-radius: 8px;
+    position: relative;
+    display: flex;
+    flex: 1;
+    height: 10px;
+    margin-left: 20px;
+
+    border-radius: $bar-radius;
+    background: $K100;
+    box-shadow: 0 0 0 $white;
+
+    // Result
+    &-result {
+      transition: width 1s ease;
+      position: relative;
+      z-index: 1;
+      height: 100%;
+
+      &-count {
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        width: 60px;
+        margin-top: 6px;
+        margin-left: -30px;
+
+        font-size: 14px;
+        font-weight: 600;
+        line-height: 1;
+        text-align: center;
+
+        .correct & {
+          color: $green;
+        }
+        .incorrect & {
+          color: $red;
+        }
+      }
+
+      &.highlight {
+        z-index: 2;
+      }
+
+      &.correct {
+        border-top-left-radius: $bar-radius;
+        border-bottom-left-radius: $bar-radius;
+        background: $green;
+
+        &.highlight {
+          animation: glow-green 1.2s;
+          animation-iteration-count: 2;
+        }
+      }
+      &.incorrect {
+        border-top-right-radius: $bar-radius;
+        border-bottom-right-radius: $bar-radius;
+        background: $red;
+
+        &.highlight {
+          animation: glow-red 1.2s;
+          animation-iteration-count: 2;
+        }
+      }
     }
   }
 
   // Bottom
   &-bottom {
     display: flex;
-    justify-content: space-between;
     align-items: center;
 
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 500;
-    color: $K700;
+    color: $K600;
+
+    span {
+      margin-right: 16px;
+    }
 
     button {
       cursor: pointer;
       transition: 0.3s ease color, 0.3s ease border-color;
+      margin-left: auto;
       padding: 6px 8px;
 
       border-radius: 4px;
@@ -134,18 +212,16 @@ button {
 
 // Flag
 .flag {
-  // border: 5px solid green;
   display: flex;
   align-items: center;
   justify-content: center;
 
   img {
-    // margin: 0;
-    box-shadow: $boxShadow500;
-    // width: 100%;
+    width: auto;
     height: 100%;
-    // max-width: 100%;
-    // max-height: 100%;
+
+    box-shadow: $boxShadow600;
+    // box-shadow: 0 0 0 10px green;
   }
 
   &-guess-text {
@@ -155,25 +231,85 @@ button {
 }
 
 // Question: Flag
-.question-flag {
+.question {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  width: 100%;
   margin-bottom: 40px;
+  text-align: center;
+
+  .instructions {
+    margin-bottom: 20px;
+    font-size: 16px;
+    font-weight: 500;
+    color: $K600;
+  }
+
+  .country-name {
+    margin-top: -10px;
+    font-size: 36px;
+    font-weight: 700;
+    color: $K800;
+  }
 
   .flag {
     width: 100%;
     height: 300px;
+    padding: 0 20px;
   }
 }
 
 // Buttons
+button {
+  border: 0;
+
+  &:not(:disabled) {
+    cursor: pointer;
+  }
+
+  &.next-question {
+    transition: 0.3s ease background-color;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 20px;
+
+    border-radius: 8px;
+
+    font-size: 20px;
+    font-weight: 600;
+
+    &:disabled {
+      background: $K200;
+      color: $K400;
+    }
+
+    &:not(:disabled) {
+      background: $blue;
+      box-shadow: $boxShadow500;
+      color: $white;
+
+      &:hover {
+        background-color: $blue-hover;
+      }
+    }
+  }
+}
+
 .button-group {
   display: flex;
+  margin-bottom: 40px;
+}
+
+// Names
+.options-name {
   flex-direction: column;
-  margin-top: 40px;
 
   button {
-    transition: 0.2s ease color, 0.2s ease background-color,
-      0.2s ease box-shadow, 0.3s ease border-color;
-    cursor: pointer;
+    // transition: 0.2s ease color, 0.2s ease background-color,
+    //   0.2s ease box-shadow, 0.3s ease border-color;
     display: flex;
     // justify-content: center;
     align-items: center;
@@ -181,41 +317,94 @@ button {
     height: 60px;
     padding: 0 20px;
 
-    border: 1px solid $K200;
-    // border-radius: 8px;
+    border: 0;
+    border-radius: 8px;
     background: transparent;
 
     font-size: 20px;
     font-weight: 600;
     color: $blue;
+    width: 100%;
 
-    &:first-child {
-      border-top-left-radius: 8px;
-      border-top-right-radius: 8px;
-    }
-    &:last-child {
-      border-bottom-left-radius: 8px;
-      border-bottom-right-radius: 8px;
-    }
     &:not(:first-child) {
-      // margin-top: 12px;
       margin-top: -1px;
     }
 
-    &:focus,
-    &:hover {
-      background: $white;
-      border-color: $white;
-      // color: $blue-hover;
-      box-shadow: $boxShadow500;
+    &:not(:disabled) {
+      cursor: pointer;
+
+      &:focus,
+      &:hover {
+        outline: none;
+        background: $white;
+        box-shadow: $boxShadow500;
+      }
     }
 
     &:disabled {
-      background: $K300;
+      color: $K300;
+
+      &.correct-guessed {
+        background-color: $green;
+        color: $white;
+      }
+      &.correct-not-guessed {
+        color: $green;
+      }
+      &.incorrect-guess {
+        background-color: $red;
+        color: $white;
+      }
+    }
+  }
+}
+
+// Flags
+.options-flag {
+  flex-wrap: wrap;
+
+  button {
+    transition: 0.2s ease background, 0.2s ease box-shadow;
+    width: 50%;
+    padding: 0;
+
+    border-radius: 10px;
+    background-color: transparent;
+    box-shadow: 0 0 0 $white;
+
+    .flag {
+      height: 180px;
+      padding: 20px;
+
+      img {
+        width: auto;
+        height: 80%;
+      }
     }
 
-    &.option {
-      width: 100%;
+    &:not(:disabled) {
+      &:focus,
+      &:hover {
+        outline: none;
+        background: $white;
+        box-shadow: $boxShadow500;
+      }
+    }
+
+    &:disabled {
+      &.correct-guessed,
+      &.correct-not-guessed {
+        box-shadow: inset 0 0 0 4px $green;
+        background: rgba($green, 0.2);
+      }
+      &.incorrect-guess {
+        box-shadow: inset 0 0 0 4px $red;
+        background: rgba($red, 0.2);
+      }
+      &.other {
+        opacity: 0.2;
+        filter: grayscale(100%);
+      }
     }
   }
 }

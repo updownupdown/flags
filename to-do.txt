@@ -1,0 +1,5 @@
+in randomly generated list:
+- exclude recents (10 most recent countries)
+- exclude similar flags (make list of similar countries)
+
+result is just the same screen, but with the guess in red/green, the other results greyed out, and a next button below. wrong guess shows flag.
