@@ -8,7 +8,7 @@ import {
 import Flag from "react-world-flags";
 import "./Question.scss";
 import clsx from "clsx";
-import { Settings } from "./Settings";
+import { ISettings } from "./Settings";
 import { calculateAverage, shuffleArray } from "../utils/utils";
 import { Settings as SettingsIcon } from "../icons/Settings";
 import { Score } from "./Layout";
@@ -33,7 +33,7 @@ const Counter = memo(function Counter({ num, theme }: CounterProps) {
 });
 
 interface Props {
-  settings: Settings;
+  settings: ISettings;
   score: Score;
   setScore: (score: Score) => void;
   setIsSettingsModalOpen: (open: boolean) => void;

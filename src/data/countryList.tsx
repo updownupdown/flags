@@ -1,4 +1,4 @@
-import { Settings } from "../components/Settings";
+import { ISettings } from "../components/Settings";
 
 export interface CountryData {
   code: string;
@@ -15,7 +15,7 @@ export interface CountryData {
 
 const populationThreshold = 100000;
 
-export function getCountryCodesWithSettings(settings: Settings) {
+export function getCountryCodesWithSettings(settings: ISettings) {
   const list = countryList
     .filter(
       (country) =>

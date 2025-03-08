@@ -3,16 +3,16 @@ import "./Settings.scss";
 import { defaultScore, Score } from "./Layout";
 
 interface Props {
-  settings: Settings;
-  setSettings: (settings: Settings) => void;
+  settings: ISettings;
+  setSettings: (settings: ISettings) => void;
   setScore: (score: Score) => void;
 }
 
-export interface Settings {
+export interface ISettings {
   includeMinor: boolean;
 }
 
-export const defaultSettings: Settings = {
+export const defaultSettings: ISettings = {
   includeMinor: false,
 };
 

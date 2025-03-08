@@ -3,7 +3,7 @@ import { FlagTable } from "./FlagTable";
 import "./Layout.scss";
 import { Question } from "./Question";
 import { useLocalStorage } from "../hooks/useLocalStorage";
-import { defaultSettings, Settings } from "./Settings";
+import { defaultSettings, ISettings, Settings } from "./Settings";
 import { countryList } from "../data/countryList";
 import { Modal } from "./Modal";
 
@@ -36,7 +36,7 @@ export function defaultScore() {
 }
 
 export const Layout = () => {
-  const [settings, setSettings] = useLocalStorage<Settings>(
+  const [settings, setSettings] = useLocalStorage<ISettings>(
     "settings",
     defaultSettings
   );

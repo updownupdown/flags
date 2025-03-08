@@ -1,17 +1,16 @@
 import React from "react";
 import "./FlagTable.scss";
 import {
-  countryList,
   getCountryCodesWithSettings,
   getCountryInfo,
 } from "../data/countryList";
 import Flag from "react-world-flags";
-import { calculateAverage, formatPopulationNumber } from "../utils/utils";
-import { Settings } from "./Settings";
+import { formatPopulationNumber } from "../utils/utils";
+import { ISettings } from "./Settings";
 import { Score } from "./Layout";
 
 interface Props {
-  settings: Settings;
+  settings: ISettings;
   score: Score;
 }
 
@@ -21,7 +20,7 @@ export const FlagTable = ({ settings, score }: Props) => {
   return (
     <div className="flag-table">
       {list.map((countryCode) => {
-        if (!score.countries) return;
+        if (!score.countries) return null;
 
         const country = getCountryInfo(countryCode);
         const countryScore = score.countries.find((c) => c.x === countryCode);
