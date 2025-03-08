@@ -1,0 +1,49 @@
+.flags-modal {
+  width: 800px;
+}
+
+.flag-table {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  gap: 40px;
+  row-gap: 40px;
+  padding: 30px;
+
+  &__country {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 150px;
+    height: 150px;
+    gap: 8px;
+
+    &__img {
+      img {
+        width: 100%;
+        height: 100px;
+        object-fit: contain;
+        filter: drop-shadow(1px 2px 6px rgba(var(--K800-rgb), 0.1))
+          drop-shadow(3px 6px 20px rgba(var(--K800-rgb), 0.15));
+      }
+    }
+    &__info {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+
+      &__name {
+        font-size: 16px;
+        font-weight: 800;
+      }
+      &__stats,
+      &__pop {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--K600);
+      }
+    }
+  }
+}

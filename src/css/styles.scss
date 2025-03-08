@@ -1,0 +1,100 @@
+@import url("https://fonts.googleapis.com/css2?family=Red+Hat+Display:ital,wght@0,300..900;1,300..900&display=swap");
+
+@import "./media.scss";
+
+$theme-colors: (
+  "black": #000000,
+  "white": #ffffff,
+  "K900": #333333,
+  "K800": #4d4d4d,
+  "K700": #666666,
+  "K600": #808080,
+  "K500": #999999,
+  "K400": #b3b3b3,
+  "K300": #cccccc,
+  "K200": #e0e0e0,
+  "K150": #ebebeb,
+  "K100": #f5f5f5,
+  "K50": #fafafa,
+  "correct": #30bf78,
+  "incorrect": #ca3333,
+  "accent": #3a8aa7,
+  "accent-hover": #1b6079,
+);
+
+:root {
+  // Generate hex/rgb CSS vars for default/rgba usage, respectively
+  @function hexToRGB($hex) {
+    @return red($hex), green($hex), blue($hex);
+  }
+  @each $name, $color in $theme-colors {
+    --#{$name}: #{$color};
+    --#{$name}-rgb: #{hexToRGB($color)};
+  }
+
+  --font: "Red Hat Display", sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+
+  background: var(--K100);
+
+  font-weight: 400;
+  color: var(--K800);
+  line-height: 1;
+}
+
+body,
+button,
+a {
+  font-family: var(--font);
+}
+
+button {
+  cursor: pointer;
+  background: unset;
+  border: unset;
+  padding: unset;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+  font-family: var(--font);
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+p {
+  margin: 0 0 20px;
+  font-weight: 500;
+
+  b {
+    font-weight: 700;
+  }
+}
+
+a {
+  text-decoration: none;
+  font-weight: 600;
+}
+
+#root {
+  width: 100%;
+}

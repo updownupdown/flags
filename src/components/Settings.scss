@@ -1,0 +1,29 @@
+.settings {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 40px;
+  padding: 30px;
+
+  h2 {
+    font-size: 20px;
+    font-weight: 800;
+  }
+
+  .settings-input label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .settings-reset-btn {
+    transition: 0.2s ease color;
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--K600);
+
+    &:hover {
+      color: var(--incorrect);
+    }
+  }
+}

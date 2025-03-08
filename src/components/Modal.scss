@@ -1,0 +1,62 @@
+dialog {
+  overflow: hidden;
+  top: 50%;
+  left: 50%;
+  right: auto;
+  bottom: auto;
+  margin-right: -50%;
+  transform: translate(-50%, -50%);
+
+  display: flex;
+  flex-direction: column;
+
+  width: 400px;
+  max-width: calc(100vw - 40px);
+
+  border: unset;
+  border-radius: 8px;
+  background: var(--white);
+  box-shadow: 1px 2px 12px rgba(var(--K800-rgb), 0.2),
+    3px 6px 30px rgba(var(--K800-rgb), 0.25);
+
+  .modal-header {
+    display: flex;
+    align-items: center;
+    background: var(--K800);
+    height: 60px;
+    padding: 0 12px 0 20px;
+    flex-shrink: 0;
+
+    h2 {
+      font-size: 20px;
+      color: var(--white);
+      flex: 1;
+    }
+
+    .dialog-close-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4px;
+
+      svg {
+        width: 32px;
+        height: 32px;
+        fill: var(--K400);
+      }
+
+      &:hover svg {
+        fill: var(--incorrect);
+      }
+    }
+  }
+
+  .modal-content {
+    overflow-y: auto;
+  }
+}
+
+::backdrop {
+  background: rgba(var(--K600-rgb), 0.4);
+  backdrop-filter: blur(6px);
+}
