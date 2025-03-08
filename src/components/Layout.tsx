@@ -37,10 +37,10 @@ export function defaultScore() {
 
 export const Layout = () => {
   const [settings, setSettings] = useLocalStorage<Settings>(
-    "settings",
+    "flagSettings",
     defaultSettings
   );
-  const [score, setScore] = useLocalStorage<Score>("score", defaultScore());
+  const [score, setScore] = useLocalStorage<Score>("flagScore", defaultScore());
 
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
   const [isListModalOpen, setIsListModalOpen] = useState(false);
