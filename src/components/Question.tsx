@@ -212,8 +212,10 @@ export const Question = ({
 
     if (!currentCountry) return null;
 
-    const confidenceLeft =
-      ((currentCountry.s + confidenceMag) / (confidenceMag * 2)) * 100;
+    const confidenceLeft = Math.max(
+      10,
+      ((currentCountry.s + confidenceMag) / (confidenceMag * 2)) * 100
+    );
 
     return (
       <div className="confidence">
@@ -223,13 +225,17 @@ export const Question = ({
           <div className="confidence-bar__middle" />
           <div
             className="confidence-bar__indicator"
-            style={{ width: confidenceLeft + "%" }}
+            style={{
+              width: confidenceLeft + "%",
+              background:
+                confidenceLeft > 70
+                  ? "var(--correct)"
+                  : confidenceLeft < 30
+                  ? "var(--incorrect)"
+                  : "var(--orange)",
+            }}
           />
         </div>
-
-        <span className="confidence__guesses">
-          Guesses: {currentCountry.c} / {currentCountry.c + currentCountry.i}
-        </span>
       </div>
     );
   };

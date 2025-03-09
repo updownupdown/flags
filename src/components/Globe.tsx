@@ -3,7 +3,7 @@ import { mapShapes as country } from "../map/map-shapes";
 import { svgPathBbox } from "svg-path-bbox";
 import "./Globe.scss";
 
-const goalProportionPercentage = 0.5;
+const goalProportionPercentage = 0.38;
 const mapScaling = 0.4;
 
 const windowSize = {
