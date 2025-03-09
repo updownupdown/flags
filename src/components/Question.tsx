@@ -7,6 +7,7 @@ import {
 } from "../data/countryList";
 import Flag from "react-world-flags";
 import "./Question.scss";
+import "./StatusBar.scss";
 import clsx from "clsx";
 import { ISettings } from "./Settings";
 import {
@@ -21,7 +22,7 @@ const minSkewedLookupRestriction = 5;
 const maxRecentLength = 5;
 const delay = {
   correct: 750,
-  incorrect: 5000,
+  incorrect: 3000,
 };
 const confidenceMag = 5;
 
@@ -71,14 +72,6 @@ export const Question = ({
 
     const randomCountryCode =
       scoredCountries[Math.floor(Math.random() * skewedLookupLength)];
-
-    // Update recently selected countries
-    let recentList = recentlySelected;
-    if (recentList.length >= maxRecentLength) {
-      recentList.shift();
-    }
-    recentList.push(randomCountryCode.x);
-    setRecentlySelected(recentList);
 
     return getCountryInfo(randomCountryCode.x);
   }
@@ -158,6 +151,14 @@ export const Question = ({
 
     setAnswerCorrect(isCorrectGuess);
     setScore(newScore);
+
+    // Update recently selected countries
+    let recentList = recentlySelected;
+    if (recentList.length >= maxRecentLength) {
+      recentList.shift();
+    }
+    recentList.push(answer.code);
+    setRecentlySelected(recentList);
   }, [guess]);
 
   const AnswerButtons = () => {
@@ -201,7 +202,7 @@ export const Question = ({
     );
   };
 
-  const CurrentCountryStats = () => {
+  const ConfidenceInfo = () => {
     if (!answer) return null;
 
     const currentCountry = score.countries.find(
@@ -214,30 +215,35 @@ export const Question = ({
       ((currentCountry.s + confidenceMag) / (confidenceMag * 2)) * 100;
 
     return (
-      <div className="answer-hints">
-        <div className="country-stats">
-          <span className="country-stats__stat country-stats__stat--guesses">
-            Guesses: {currentCountry.c} / {currentCountry.c + currentCountry.i}
-          </span>
-          <span className="country-stats__stat country-stats__stat--pop">
-            Pop: {formatPopulationNumber(answer.population)}
-          </span>
-          <span className="country-stats__stat country-stats__stat--capital">
-            Capital: {answer.capital}
-          </span>
+      <div className="confidence">
+        <span>Confidence</span>
+
+        <div className="confidence-bar">
+          <div className="confidence-bar__middle" />
+          <div
+            className="confidence-bar__indicator"
+            style={{ width: confidenceLeft + "%" }}
+          />
         </div>
 
-        <div className="confidence">
-          <span>Confidence</span>
+        <span className="confidence__guesses">
+          Guesses: {currentCountry.c} / {currentCountry.c + currentCountry.i}
+        </span>
+      </div>
+    );
+  };
 
-          <div className="confidence-bar">
-            <div className="confidence-bar__middle" />
-            <div
-              className="confidence-bar__indicator"
-              style={{ width: confidenceLeft + "%" }}
-            />
-          </div>
-        </div>
+  const CountryInfo = () => {
+    if (!answer) return null;
+
+    return (
+      <div className="country-stats">
+        <span className="country-stats__pop">
+          Pop: {formatPopulationNumber(answer.population)}
+        </span>
+        <span className="country-stats__capital">
+          Capital: {answer.capital}
+        </span>
       </div>
     );
   };
@@ -300,7 +306,6 @@ export const Question = ({
           Flag List
         </button>
         <button
-          className="settings-reset-btn"
           onClick={() => {
             if (
               window.confirm(
@@ -337,11 +342,13 @@ export const Question = ({
       </div>
 
       <div className="question__country">
+        <ConfidenceInfo />
+
         <div className="question__country__flag">
           <Flag code={answer.code} />
         </div>
 
-        <CurrentCountryStats />
+        <CountryInfo />
 
         <WrongGuessFlag />
       </div>
