@@ -1,4 +1,8 @@
-import { ISettings } from "../components/Settings";
+import {
+  Difficulties,
+  DifficultyPops,
+  ISettings,
+} from "../components/Settings";
 
 export interface CountryData {
   code: string;
@@ -13,15 +17,12 @@ export interface CountryData {
   small?: boolean;
 }
 
-const populationThreshold = 100000;
-
 export function getCountryCodesWithSettings(settings: ISettings) {
+  const populationThreshold =
+    DifficultyPops[settings.difficulty as Difficulties];
+
   const list = countryList
-    .filter(
-      (country) =>
-        settings.includeMinor === true ||
-        country.population >= populationThreshold
-    )
+    .filter((country) => country.population >= populationThreshold)
     .map((country) => country.code);
 
   return list;

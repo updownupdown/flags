@@ -68,9 +68,11 @@ export const Question = ({
       (countryCode) => !recentlySelected.includes(countryCode)
     );
 
+    console.log(eligibleCountriesFiltered.length);
+
     const randomCountryCode =
       eligibleCountriesFiltered[
-        Math.floor(Math.random() * eligibleCountries.length)
+        Math.floor(Math.random() * eligibleCountriesFiltered.length)
       ];
 
     let recentList = recentlySelected;
@@ -114,7 +116,7 @@ export const Question = ({
   // Set list of eligible countries
   useEffect(() => {
     setElibibleCountries(getCountryCodesWithSettings(settings));
-  }, []);
+  }, [settings]);
 
   // If has eligible countries, select a random one
   useEffect(() => {
