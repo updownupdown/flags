@@ -21,7 +21,7 @@ const minSkewedLookupRestriction = 5;
 const maxRecentLength = 5;
 const delay = {
   correct: 750,
-  incorrect: 2000,
+  incorrect: 5000,
 };
 const confidenceMag = 5;
 
@@ -267,6 +267,19 @@ export const Question = ({
     );
   };
 
+  const WrongGuessFlag = () => {
+    if (guess === undefined || answerCorrect !== false) return null;
+
+    return (
+      <div className="other-flag">
+        <div className="other-flag__inner">
+          <Flag code={guess} />
+          <span>{countryList.find((c) => c.code === guess)?.name}</span>
+        </div>
+      </div>
+    );
+  };
+
   if (answer === undefined) return null;
 
   return (
@@ -329,6 +342,8 @@ export const Question = ({
         </div>
 
         <CurrentCountryStats />
+
+        <WrongGuessFlag />
       </div>
 
       <AnswerButtons />

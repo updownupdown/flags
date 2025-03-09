@@ -8,6 +8,7 @@
   gap: 16px;
 
   &__country {
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -39,6 +40,44 @@
       }
       @media (max-height: 650px) {
         height: 130px;
+      }
+    }
+
+    .other-flag {
+      overflow: hidden;
+      position: absolute;
+      z-index: 3;
+      top: 0;
+      right: 0;
+
+      border-radius: 12px;
+      background: var(--white);
+      box-shadow: 1px 2px 8px rgba(var(--K800-rgb), 0.15),
+        1px 2px 12px rgba(var(--K800-rgb), 0.15);
+
+      &__inner {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        padding: 8px;
+        gap: 8px;
+
+        background: rgba(var(--incorrect-rgb), 0.2);
+      }
+
+      span {
+        font-size: 14px;
+        font-weight: 800;
+        color: var(--incorrect-dark);
+        text-align: center;
+      }
+
+      img {
+        max-width: 120px;
+        height: 60px;
+        object-fit: contain;
+        filter: drop-shadow(1px 2px 4px rgba(var(--K800-rgb), 0.2));
       }
     }
   }
@@ -293,6 +332,7 @@
   .confidence-bar {
     $bar-height: 10px;
 
+    overflow: hidden;
     position: relative;
     width: 100%;
     height: $bar-height;
@@ -317,7 +357,6 @@
       left: 0;
       height: 100%;
 
-      border-radius: calc($bar-height / 2);
       background: var(--K700);
     }
   }
