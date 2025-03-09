@@ -1,0 +1,32 @@
+.globe-wrap {
+  overflow: hidden;
+  position: relative;
+  flex-shrink: 0;
+
+  border-radius: 12px;
+  background: var(--K200);
+
+  &:before {
+    content: "";
+    position: absolute;
+    z-index: 2;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 12px;
+    box-shadow: inset 0 0 10px rgba(var(--K800-rgb), 0.3);
+  }
+
+  .globe {
+    position: absolute;
+    z-index: 1;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    svg {
+      position: absolute;
+    }
+  }
+}

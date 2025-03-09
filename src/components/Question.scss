@@ -5,17 +5,64 @@
   align-items: center;
   width: 100%;
   height: 100%;
+  max-height: 800px;
   gap: 12px;
 
   &__country {
-    position: relative;
+    $col-gap: 20px;
+
     display: flex;
     flex-direction: column;
-    align-items: center;
     justify-content: center;
     width: 100%;
     height: 100%;
-    gap: 18px;
+    gap: 20px;
+
+    &__top {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      gap: $col-gap;
+
+      &__left {
+        flex: 1;
+      }
+
+      &__right {
+        position: relative;
+      }
+
+      @media (max-width: 360px) {
+        &__right {
+          display: none;
+        }
+      }
+    }
+
+    &__bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: $col-gap;
+
+      &__left {
+        display: flex;
+        flex: 1;
+      }
+      &__right {
+        display: flex;
+        justify-content: center;
+        width: var(--minimap-size);
+        flex-shrink: 0;
+      }
+
+      @media (max-width: 360px) {
+        &__right {
+          display: none;
+        }
+      }
+    }
 
     span {
       font-size: 14px;
@@ -25,9 +72,10 @@
 
     .confidence {
       display: flex;
+      flex-direction: column;
       align-items: center;
-      justify-content: space-around;
-      gap: 12px;
+      gap: 8px;
+      flex-shrink: 0;
 
       .confidence-bar {
         $bar-height: 10px;
@@ -37,7 +85,6 @@
 
         width: 80px;
         height: $bar-height;
-        flex: 1;
 
         border-radius: calc($bar-height / 2);
         background: var(--K300);
@@ -61,15 +108,6 @@
           height: 100%;
 
           background: var(--K700);
-        }
-      }
-
-      &__guesses {
-        width: 120px;
-        text-align: center;
-
-        @media (max-width: 380px) {
-          display: none;
         }
       }
     }
@@ -103,8 +141,11 @@
       overflow: hidden;
       position: absolute;
       z-index: 3;
-      bottom: 0px;
-      right: -12px;
+      width: var(--minimap-size);
+      height: var(--minimap-size);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
 
       border-radius: 12px;
       background: var(--white);
@@ -118,6 +159,8 @@
         flex-direction: column;
         padding: 8px;
         gap: 8px;
+        width: var(--minimap-size);
+        height: var(--minimap-size);
 
         background: rgba(var(--incorrect-rgb), 0.2);
       }
@@ -139,18 +182,15 @@
 
   .country-stats {
     display: flex;
-    justify-content: space-around;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     width: 100%;
+    gap: 8px;
 
     font-size: 14px;
     font-weight: 600;
     color: var(--K700);
-
-    @media (max-width: 380px) {
-      &__pop {
-        display: none;
-      }
-    }
   }
 
   .answer-btns {

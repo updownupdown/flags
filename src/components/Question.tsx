@@ -17,6 +17,7 @@ import {
   shuffleArray,
 } from "../utils/utils";
 import { defaultScore, Score } from "./Layout";
+import { Globe } from "./Globe";
 
 const minSkewedLookupRestriction = 5;
 const maxRecentLength = 5;
@@ -289,71 +290,84 @@ export const Question = ({
   if (answer === undefined) return null;
 
   return (
-    <div className="question">
-      <div className="status__buttons">
-        <button
-          onClick={() => {
-            setIsSettingsModalOpen(true);
-          }}
-        >
-          Set Difficulty
-        </button>
-        <button
-          onClick={() => {
-            setIsListModalOpen(true);
-          }}
-        >
-          Flag List
-        </button>
-        <button
-          onClick={() => {
-            if (
-              window.confirm(
-                "Are you sure you want to reset your score and progress?"
-              )
-            ) {
-              setScore(defaultScore());
-            }
-          }}
-        >
-          Reset score
-        </button>
+    <>
+      <div className="question">
+        <div className="status__buttons">
+          <button
+            onClick={() => {
+              setIsSettingsModalOpen(true);
+            }}
+          >
+            Set Difficulty
+          </button>
+          <button
+            onClick={() => {
+              setIsListModalOpen(true);
+            }}
+          >
+            Flag List
+          </button>
+          <button
+            onClick={() => {
+              if (
+                window.confirm(
+                  "Are you sure you want to reset your score and progress?"
+                )
+              ) {
+                setScore(defaultScore());
+              }
+            }}
+          >
+            Reset score
+          </button>
+        </div>
+
+        <div className="status">
+          <div className="stat">
+            <span>Correct</span>
+            <span className="stat-col-correct">{score.correct}</span>
+          </div>
+
+          <div className="stat">
+            <span>Incorrect</span>
+            <span className="stat-col-incorrect">{score.incorrect}</span>
+          </div>
+
+          <div className="stat">
+            <span>Average</span>
+            <span className="stat-col-avg">
+              {Math.round(calculateAverage(score.correct, score.incorrect))}%
+            </span>
+          </div>
+
+          <StatusBar />
+        </div>
+
+        <div className="question__country">
+          <div className="question__country__top">
+            <div className="question__country__top__left">
+              <div className="question__country__flag">
+                <Flag code={answer.code} />
+              </div>
+            </div>
+            <div className="question__country__top__right">
+              <Globe selectedCountry={answer.code} />
+
+              <WrongGuessFlag />
+            </div>
+          </div>
+          <div className="question__country__bottom">
+            <div className="question__country__bottom__left">
+              <CountryInfo />
+            </div>
+            <div className="question__country__bottom__right">
+              <ConfidenceInfo />
+            </div>
+          </div>
+        </div>
+
+        <AnswerButtons />
       </div>
-
-      <div className="status">
-        <div className="stat">
-          <span>Correct</span>
-          <span className="stat-col-correct">{score.correct}</span>
-        </div>
-
-        <div className="stat">
-          <span>Incorrect</span>
-          <span className="stat-col-incorrect">{score.incorrect}</span>
-        </div>
-
-        <div className="stat">
-          <span>Average</span>
-          <span className="stat-col-avg">
-            {Math.round(calculateAverage(score.correct, score.incorrect))}%
-          </span>
-        </div>
-
-        <StatusBar />
-      </div>
-
-      <div className="question__country">
-        <ConfidenceInfo />
-
-        <div className="question__country__flag">
-          <Flag code={answer.code} />
-        </div>
-
-        <CountryInfo />
-
-        <WrongGuessFlag />
-      </div>
-
-      <AnswerButtons />
-    </div>
+    </>
   );
 };
