@@ -1,5 +1,6 @@
 import {
   Difficulties,
+  Difficulty,
   DifficultyPops,
   ISettings,
 } from "../components/Settings";
@@ -17,15 +18,14 @@ export interface CountryData {
   small?: boolean;
 }
 
-export function getCountryCodesWithSettings(settings: ISettings) {
-  const populationThreshold =
-    DifficultyPops[settings.difficulty as Difficulties];
-
-  const list = countryList
-    .filter((country) => country.population >= populationThreshold)
+export function getCountryCodesWithDifficulty(difficulty: Difficulties) {
+  return countryList
+    .filter((country) => country.population >= DifficultyPops[difficulty])
     .map((country) => country.code);
+}
 
-  return list;
+export function getCountryCodesWithSettings(settings: ISettings) {
+  return getCountryCodesWithDifficulty(settings.difficulty as Difficulties);
 }
 
 export function getCountryInfo(countryCode: string) {

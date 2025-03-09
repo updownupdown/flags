@@ -27,3 +27,7 @@ export function calculateAverage(correct: number, incorrect: number) {
 
   return (correct / (correct + incorrect)) * 100;
 }
+
+export function clamp(number: number, min: number, max: number) {
+  return Math.min(Math.max(number, min), max);
+}

@@ -19,6 +19,8 @@ dialog {
   box-shadow: 1px 2px 12px rgba(var(--K800-rgb), 0.2),
     3px 6px 30px rgba(var(--K800-rgb), 0.25);
 
+  color: var(--K800);
+
   .modal-header {
     display: flex;
     align-items: center;
@@ -31,6 +33,7 @@ dialog {
       font-size: 20px;
       color: var(--white);
       flex: 1;
+      font-weight: 700;
     }
 
     .dialog-close-btn {

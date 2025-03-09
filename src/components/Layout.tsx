@@ -11,7 +11,7 @@ interface ScoreCountry {
   x: string;
   c: number;
   i: number;
-  a: number;
+  s: number;
 }
 
 export interface Score {
@@ -22,10 +22,14 @@ export interface Score {
 
 export function defaultScore() {
   const countries = countryList.map((country) => ({
+    /** Country code */
     x: country.code,
+    /** Correct guesses */
     c: 0,
+    /** Incorrect guesses */
     i: 0,
-    a: 0,
+    /** Confidence score */
+    s: 0,
   }));
 
   return {
@@ -81,12 +85,16 @@ export const Layout = () => {
       </Modal>
 
       <Modal
-        title="Flags List"
+        title="Flag List"
         isOpen={isListModalOpen}
         onClose={() => setIsListModalOpen(false)}
         modalClass="flags-modal"
       >
-        <FlagTable settings={settings} score={score} />
+        <FlagTable
+          settings={settings}
+          score={score}
+          setSettings={setSettings}
+        />
       </Modal>
     </>
   );

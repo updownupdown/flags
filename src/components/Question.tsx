@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import {
   CountryData,
   countryList,
@@ -9,10 +9,11 @@ import Flag from "react-world-flags";
 import "./Question.scss";
 import clsx from "clsx";
 import { ISettings } from "./Settings";
-import { calculateAverage, shuffleArray } from "../utils/utils";
+import { calculateAverage, clamp, shuffleArray } from "../utils/utils";
 import { Settings as SettingsIcon } from "../icons/Settings";
 import { Score } from "./Layout";
 
+const minSkewedLookupRestriction = 5;
 const maxRecentLength = 5;
 const delay = {
   correct: 750,
@@ -64,26 +65,33 @@ export const Question = ({
   );
 
   function getRandomCountry() {
-    const eligibleCountriesFiltered = eligibleCountries.filter(
+    const eligibleCountriesExceptRecent = eligibleCountries.filter(
       (countryCode) => !recentlySelected.includes(countryCode)
     );
 
-    console.log(eligibleCountriesFiltered.length);
+    const scoredCountries = score.countries
+      .filter((country) => eligibleCountriesExceptRecent.includes(country.x))
+      .sort((a, b) => a.s - b.s);
+
+    // Randomly pick a threshold for the random number
+    // to favour the lowest scoring countries
+    const skewedLookupLength = Math.max(
+      minSkewedLookupRestriction,
+      Math.floor(Math.random() * scoredCountries.length)
+    );
 
     const randomCountryCode =
-      eligibleCountriesFiltered[
-        Math.floor(Math.random() * eligibleCountriesFiltered.length)
-      ];
+      scoredCountries[Math.floor(Math.random() * skewedLookupLength)];
 
+    // Update recently selected countries
     let recentList = recentlySelected;
     if (recentList.length >= maxRecentLength) {
       recentList.shift();
     }
-    recentList.push(randomCountryCode);
-
+    recentList.push(randomCountryCode.x);
     setRecentlySelected(recentList);
 
-    return getCountryInfo(randomCountryCode);
+    return getCountryInfo(randomCountryCode.x);
   }
 
   function getRandomAnswers(selectecCountryCode: string) {
@@ -108,6 +116,7 @@ export const Question = ({
 
     if (!country) return;
 
+    setGuess(undefined);
     setGuessCorrect(undefined);
     setSelectedCountry(country);
     getRandomAnswers(country.code);
@@ -136,8 +145,11 @@ export const Question = ({
       if (country.x === selectedCountry.code) {
         const c = country.c + (correctGuess ? 1 : 0);
         const i = country.i + (correctGuess ? 0 : 1);
-        const a = calculateAverage(c, i);
-        return { ...country, c, i, a };
+        const newConfidenceScore = Math.round(
+          country.s + (correctGuess ? 2 : -2)
+        );
+        const s = clamp(newConfidenceScore, 0, 10);
+        return { ...country, c, i, s };
       } else {
         return country;
       }
@@ -167,12 +179,7 @@ export const Question = ({
   useEffect(() => {
     if (guessCorrect === undefined) return;
 
-    setTimeout(
-      () => {
-        nextCountry();
-      },
-      guessCorrect ? delay.correct : delay.incorrect
-    );
+    setTimeout(nextCountry, guessCorrect ? delay.correct : delay.incorrect);
   }, [guessCorrect]);
 
   const AnswerButtons = () => {

@@ -3,6 +3,11 @@ import "./Settings.scss";
 import { defaultScore, Score } from "./Layout";
 import { Toggle, ToggleGroup } from "./Toggle";
 import { formatPopulationNumber, ValueOf } from "../utils/utils";
+import {
+  countryList,
+  getCountryCodesWithDifficulty,
+  getCountryCodesWithSettings,
+} from "../data/countryList";
 
 interface Props {
   settings: ISettings;
@@ -13,6 +18,7 @@ interface Props {
 
 export interface ISettings {
   difficulty: string;
+  showExcludedFlags: string;
 }
 
 export const Difficulty = {
@@ -28,13 +34,14 @@ export type Difficulties = ValueOf<typeof Difficulty>;
 export const DifficultyPops: Record<Difficulties, number> = {
   [Difficulty.VeryEasy]: 50000000,
   [Difficulty.Easy]: 10000000,
-  [Difficulty.Moderate]: 100000,
-  [Difficulty.Hard]: 10000,
+  [Difficulty.Moderate]: 5000000,
+  [Difficulty.Hard]: 100000,
   [Difficulty.VeryHard]: 0,
 };
 
 export const defaultSettings: ISettings = {
   difficulty: Difficulty.Easy,
+  showExcludedFlags: "true",
 };
 
 export const Settings = ({
@@ -48,8 +55,11 @@ export const Settings = ({
   );
 
   useEffect(() => {
-    setSettings({ difficulty });
+    setSettings({ ...settings, difficulty });
   }, [difficulty]);
+
+  const numCountriesForLevel = getCountryCodesWithDifficulty(difficulty).length;
+  const populationForLevel = formatPopulationNumber(DifficultyPops[difficulty]);
 
   return (
     <div className="settings">
@@ -65,11 +75,15 @@ export const Settings = ({
       </ToggleGroup>
 
       <span className="settings-pop-hint">
-        {DifficultyPops[difficulty] === 0
-          ? "Includes all countries."
-          : `Includes countries with a population of at least ${formatPopulationNumber(
-              DifficultyPops[difficulty]
-            )}.`}
+        {DifficultyPops[difficulty] === 0 ? (
+          `Includes all ${countryList.length} countries`
+        ) : (
+          <>
+            <span>{`Includes ${numCountriesForLevel} countries`}</span>
+            <br />
+            <span>{`(population of over ${populationForLevel})`}</span>
+          </>
+        )}
       </span>
 
       <button
