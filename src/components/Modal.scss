@@ -16,8 +16,8 @@ dialog {
   border: unset;
   border-radius: 8px;
   background: var(--white);
-  box-shadow: 1px 2px 12px rgba(var(--K800-rgb), 0.2),
-    3px 6px 30px rgba(var(--K800-rgb), 0.25);
+  box-shadow: 1px 2px 12px rgba(var(--K800-rgb), 0.3),
+    2px 4px 24px rgba(var(--K800-rgb), 0.3);
 
   color: var(--K800);
 
@@ -60,6 +60,6 @@ dialog {
 }
 
 ::backdrop {
-  background: rgba(var(--K600-rgb), 0.4);
-  backdrop-filter: blur(6px);
+  background: rgba(var(--K500-rgb), 0.5);
+  backdrop-filter: blur(4px);
 }

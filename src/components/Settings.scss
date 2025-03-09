@@ -1,28 +1,30 @@
+.settings-modal {
+  width: 340px;
+}
+
 .settings {
   display: flex;
   flex-direction: column;
   width: 100%;
-  gap: 40px;
+  gap: 20px;
   padding: 30px;
 
-  h2 {
-    font-size: 20px;
-    font-weight: 800;
-  }
-
-  .settings-input label {
-    display: flex;
-    align-items: center;
-    gap: 12px;
+  .toggle-label {
+    display: none;
   }
 
   .settings-pop-hint {
-    margin-top: -20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 50px;
 
     font-size: 16px;
-    font-weight: 600;
+    font-weight: 700;
     line-height: 1.4;
     text-align: center;
+    color: var(--K600);
   }
 
   .settings-reset-btn {

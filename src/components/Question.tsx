@@ -1,4 +1,4 @@
-import { memo, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   CountryData,
   countryList,
@@ -9,9 +9,13 @@ import Flag from "react-world-flags";
 import "./Question.scss";
 import clsx from "clsx";
 import { ISettings } from "./Settings";
-import { calculateAverage, clamp, shuffleArray } from "../utils/utils";
-import { Settings as SettingsIcon } from "../icons/Settings";
-import { Score } from "./Layout";
+import {
+  calculateAverage,
+  clamp,
+  formatPopulationNumber,
+  shuffleArray,
+} from "../utils/utils";
+import { defaultScore, Score } from "./Layout";
 
 const minSkewedLookupRestriction = 5;
 const maxRecentLength = 5;
@@ -19,25 +23,14 @@ const delay = {
   correct: 750,
   incorrect: 2000,
 };
-
-interface CounterProps {
-  theme: "correct" | "incorrect";
-  num: number;
-}
-
-const Counter = memo(function Counter({ num, theme }: CounterProps) {
-  return (
-    <div className={`status-count status-count--theme-${theme}`}>
-      <span className="status-count__num">{num}</span>
-    </div>
-  );
-});
+const confidenceMag = 5;
 
 interface Props {
   settings: ISettings;
   score: Score;
   setScore: (score: Score) => void;
   setIsSettingsModalOpen: (open: boolean) => void;
+  setIsListModalOpen: (open: boolean) => void;
 }
 
 export const Question = ({
@@ -45,23 +38,15 @@ export const Question = ({
   score,
   setScore,
   setIsSettingsModalOpen,
+  setIsListModalOpen,
 }: Props) => {
-  const [selectedCountry, setSelectedCountry] = useState<
-    CountryData | undefined
-  >(undefined);
+  const [answer, setAnswer] = useState<CountryData | undefined>(undefined);
   const [recentlySelected, setRecentlySelected] = useState<string[]>([]);
   const [eligibleCountries, setElibibleCountries] = useState<string[]>([]);
   const [answerList, setAnswerList] = useState<string[]>([]);
-  const [guessCorrect, setGuessCorrect] = useState<boolean | undefined>(
-    undefined
-  );
   const [guess, setGuess] = useState<string | undefined>(undefined);
-
-  const [previousScoreCorrect, setPreviousScoreCorrect] = useState(
-    score.correct
-  );
-  const [previousScoreIncorrect, setPreviousScoreIncorrect] = useState(
-    score.incorrect
+  const [answerCorrect, setAnswerCorrect] = useState<boolean | undefined>(
+    undefined
   );
 
   function getRandomCountry() {
@@ -69,9 +54,13 @@ export const Question = ({
       (countryCode) => !recentlySelected.includes(countryCode)
     );
 
-    const scoredCountries = score.countries
-      .filter((country) => eligibleCountriesExceptRecent.includes(country.x))
-      .sort((a, b) => a.s - b.s);
+    let scoredCountries = score.countries.filter((country) =>
+      eligibleCountriesExceptRecent.includes(country.x)
+    );
+
+    shuffleArray(scoredCountries);
+
+    scoredCountries.sort((a, b) => a.s - b.s);
 
     // Randomly pick a threshold for the random number
     // to favour the lowest scoring countries
@@ -111,14 +100,14 @@ export const Question = ({
     setAnswerList(selected);
   }
 
-  function nextCountry() {
+  function pickNextAnswer() {
     const country = getRandomCountry();
 
     if (!country) return;
 
     setGuess(undefined);
-    setGuessCorrect(undefined);
-    setSelectedCountry(country);
+    setAnswerCorrect(undefined);
+    setAnswer(country);
     getRandomAnswers(country.code);
   }
 
@@ -129,64 +118,53 @@ export const Question = ({
 
   // If has eligible countries, select a random one
   useEffect(() => {
-    if (eligibleCountries.length !== 0) {
-      nextCountry();
-    }
+    if (eligibleCountries.length) pickNextAnswer();
   }, [eligibleCountries]);
 
+  // When showing answer
   useEffect(() => {
-    if (!guess || !selectedCountry) return;
+    if (answerCorrect === undefined) return;
 
-    const correctGuess = guess === selectedCountry.code;
+    setTimeout(pickNextAnswer, answerCorrect ? delay.correct : delay.incorrect);
+  }, [answerCorrect]);
 
-    setGuessCorrect(correctGuess);
+  // React to guess
+  useEffect(() => {
+    if (!guess || !answer) return;
+
+    const isCorrectGuess = guess === answer.code;
 
     const countries = score.countries.map((country) => {
-      if (country.x === selectedCountry.code) {
-        const c = country.c + (correctGuess ? 1 : 0);
-        const i = country.i + (correctGuess ? 0 : 1);
-        const newConfidenceScore = Math.round(
-          country.s + (correctGuess ? 2 : -2)
+      if (country.x === answer.code) {
+        const c = country.c + (isCorrectGuess ? 1 : 0);
+        const i = country.i + (isCorrectGuess ? 0 : 1);
+        const confidenceScore = country.s + (isCorrectGuess ? 1 : -1);
+        const s = clamp(
+          Math.round(confidenceScore),
+          confidenceMag * -1,
+          confidenceMag
         );
-        const s = clamp(newConfidenceScore, 0, 10);
         return { ...country, c, i, s };
       } else {
         return country;
       }
     });
 
-    const correct = score.correct + (correctGuess ? 1 : 0);
-    const incorrect = score.incorrect + (correctGuess ? 0 : 1);
-
     const newScore = {
-      ...score,
       countries,
-      correct,
-      incorrect,
+      correct: score.correct + (isCorrectGuess ? 1 : 0),
+      incorrect: score.incorrect + (isCorrectGuess ? 0 : 1),
     };
 
-    if (score.correct !== previousScoreCorrect) {
-      setPreviousScoreCorrect(score.correct);
-    }
-    if (score.incorrect !== previousScoreIncorrect) {
-      setPreviousScoreIncorrect(score.incorrect);
-    }
-
+    setAnswerCorrect(isCorrectGuess);
     setScore(newScore);
   }, [guess]);
-
-  // When showing answer
-  useEffect(() => {
-    if (guessCorrect === undefined) return;
-
-    setTimeout(nextCountry, guessCorrect ? delay.correct : delay.incorrect);
-  }, [guessCorrect]);
 
   const AnswerButtons = () => {
     return (
       <div
         className={`answer-btns answer-btns--show-${
-          guessCorrect !== undefined ? "true" : "false"
+          answerCorrect !== undefined ? "true" : "false"
         }`}
       >
         {answerList.map((countryCode) => {
@@ -201,15 +179,15 @@ export const Question = ({
               key={countryCode}
               className={clsx(
                 "answer-btn",
-                guessCorrect !== undefined &&
-                  countryName.code === selectedCountry?.code &&
+                answerCorrect !== undefined &&
+                  countryName.code === answer?.code &&
                   "answer-btn--correct",
-                guessCorrect !== undefined &&
+                answerCorrect !== undefined &&
                   countryName.code === guess &&
-                  selectedCountry?.code !== guess &&
+                  answer?.code !== guess &&
                   "answer-btn--incorrect",
-                guessCorrect !== undefined &&
-                  countryName.code !== selectedCountry?.code &&
+                answerCorrect !== undefined &&
+                  countryName.code !== answer?.code &&
                   countryName.code !== guess &&
                   "answer-btn--neither"
               )}
@@ -223,61 +201,137 @@ export const Question = ({
     );
   };
 
-  const StatusBar = () => {
-    const animationDurationMs = guessCorrect ? delay.correct : delay.incorrect;
-    const animationDuration = animationDurationMs / 1000 + "s";
+  const CurrentCountryStats = () => {
+    if (!answer) return null;
 
+    const currentCountry = score.countries.find(
+      (country) => country.x === answer.code
+    );
+
+    if (!currentCountry) return null;
+
+    const confidenceLeft =
+      ((currentCountry.s + confidenceMag) / (confidenceMag * 2)) * 100;
+
+    return (
+      <div className="answer-hints">
+        <div className="country-stats">
+          <span className="country-stats__stat country-stats__stat--guesses">
+            Guesses: {currentCountry.c} / {currentCountry.c + currentCountry.i}
+          </span>
+          <span className="country-stats__stat country-stats__stat--pop">
+            Pop: {formatPopulationNumber(answer.population)}
+          </span>
+          <span className="country-stats__stat country-stats__stat--capital">
+            Capital: {answer.capital}
+          </span>
+        </div>
+
+        <div className="confidence">
+          <span>Confidence</span>
+
+          <div className="confidence-bar">
+            <div className="confidence-bar__middle" />
+            <div
+              className="confidence-bar__indicator"
+              style={{ width: confidenceLeft + "%" }}
+            />
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const animationDuration =
+    (answerCorrect ? delay.correct : delay.incorrect) / 1000 + "s";
+
+  const StatusBar = () => {
     return (
       <div
         className={clsx(
           "status-bar",
-          guessCorrect === true && "status-bar--correct",
-          guessCorrect === false && "status-bar--incorrect"
+          answerCorrect === true && "status-bar--correct",
+          answerCorrect === false && "status-bar--incorrect"
         )}
       >
-        {guessCorrect !== undefined && (
+        {answerCorrect !== undefined && (
           <>
             <div
               className="status-bar__progress"
               style={{ animationDuration }}
             />
-            <span>{guessCorrect ? "Correct!" : "Incorrect"}</span>
+            <span>{answerCorrect ? "Correct!" : "Incorrect"}</span>
           </>
         )}
       </div>
     );
   };
 
-  if (selectedCountry === undefined) return null;
+  if (answer === undefined) return null;
 
   return (
-    <>
-      <div className="question">
-        <div className="question__flag-img">
-          <Flag code={selectedCountry.code} />
-        </div>
-
-        <AnswerButtons />
-
-        <div className="status">
-          <div className="status-percentage">
-            <span>
-              {Math.round(calculateAverage(score.correct, score.incorrect))}%
-            </span>
-          </div>
-
-          <Counter num={score.correct} theme="correct" />
-          <StatusBar />
-          <Counter num={score.incorrect} theme="incorrect" />
-
-          <button
-            className="settings-btn"
-            onClick={() => setIsSettingsModalOpen(true)}
-          >
-            <SettingsIcon />
-          </button>
-        </div>
+    <div className="question">
+      <div className="status__buttons">
+        <button
+          onClick={() => {
+            setIsSettingsModalOpen(true);
+          }}
+        >
+          Set Difficulty
+        </button>
+        <button
+          onClick={() => {
+            setIsListModalOpen(true);
+          }}
+        >
+          Flag List
+        </button>
+        <button
+          className="settings-reset-btn"
+          onClick={() => {
+            if (
+              window.confirm(
+                "Are you sure you want to reset your score and progress?"
+              )
+            ) {
+              setScore(defaultScore());
+            }
+          }}
+        >
+          Reset score
+        </button>
       </div>
-    </>
+
+      <div className="status">
+        <div className="stat">
+          <span>Correct</span>
+          <span className="stat-col-correct">{score.correct}</span>
+        </div>
+
+        <div className="stat">
+          <span>Incorrect</span>
+          <span className="stat-col-incorrect">{score.incorrect}</span>
+        </div>
+
+        <div className="stat">
+          <span>Average</span>
+          <span className="stat-col-avg">
+            {Math.round(calculateAverage(score.correct, score.incorrect))}%
+          </span>
+        </div>
+
+        <StatusBar />
+      </div>
+
+      <div className="question__country">
+        <div className="question__country__flag">
+          <Flag code={answer.code} />
+        </div>
+
+        <CurrentCountryStats />
+      </div>
+
+      <AnswerButtons />
+    </div>
   );
 };

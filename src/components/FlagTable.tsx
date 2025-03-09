@@ -1,21 +1,12 @@
+import { useState } from "react";
 import "./FlagTable.scss";
-import {
-  countryList,
-  getCountryCodesWithSettings,
-  getCountryInfo,
-} from "../data/countryList";
+import { countryList } from "../data/countryList";
 import Flag from "react-world-flags";
 import { calculateAverage, formatPopulationNumber } from "../utils/utils";
-import {
-  defaultSettings,
-  Difficulties,
-  DifficultyPops,
-  ISettings,
-} from "./Settings";
+import { Difficulties, DifficultyPops, ISettings } from "./Settings";
 import { Score } from "./Layout";
 import clsx from "clsx";
 import { Toggle, ToggleGroup } from "./Toggle";
-import { useEffect, useState } from "react";
 
 interface Props {
   settings: ISettings;

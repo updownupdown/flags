@@ -38,7 +38,6 @@ export function defaultScore() {
     countries,
   };
 }
-
 export const Layout = () => {
   const [settings, setSettings] = useLocalStorage<ISettings>(
     "flagSettings",
@@ -57,24 +56,17 @@ export const Layout = () => {
             settings={settings}
             score={score}
             setScore={setScore}
+            setIsListModalOpen={setIsListModalOpen}
             setIsSettingsModalOpen={setIsSettingsModalOpen}
           />
-
-          <button
-            className="view-flags-btn"
-            onClick={() => {
-              setIsListModalOpen(true);
-            }}
-          >
-            View flags and progress
-          </button>
         </div>
       </div>
 
       <Modal
-        title="Settings"
+        title="Difficulty"
         isOpen={isSettingsModalOpen}
         onClose={() => setIsSettingsModalOpen(false)}
+        modalClass="settings-modal"
       >
         <Settings
           settings={settings}

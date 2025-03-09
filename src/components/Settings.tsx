@@ -1,12 +1,11 @@
 import { useEffect, useState } from "react";
 import "./Settings.scss";
-import { defaultScore, Score } from "./Layout";
+import { Score } from "./Layout";
 import { Toggle, ToggleGroup } from "./Toggle";
 import { formatPopulationNumber, ValueOf } from "../utils/utils";
 import {
   countryList,
   getCountryCodesWithDifficulty,
-  getCountryCodesWithSettings,
 } from "../data/countryList";
 
 interface Props {
@@ -80,27 +79,10 @@ export const Settings = ({
         ) : (
           <>
             <span>{`Includes ${numCountriesForLevel} countries`}</span>
-            <br />
             <span>{`(population of over ${populationForLevel})`}</span>
           </>
         )}
       </span>
-
-      <button
-        className="settings-reset-btn"
-        onClick={() => {
-          if (
-            window.confirm(
-              "Are you sure you want to reset your score and progress?"
-            )
-          ) {
-            setScore(defaultScore());
-            onClose();
-          }
-        }}
-      >
-        Reset score
-      </button>
     </div>
   );
 };

@@ -1,6 +1,5 @@
 import {
   Difficulties,
-  Difficulty,
   DifficultyPops,
   ISettings,
 } from "../components/Settings";
