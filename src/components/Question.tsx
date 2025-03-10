@@ -232,7 +232,9 @@ export const Question = ({ settings, score, setScore }: Props) => {
         </div>
         <div>
           <CapitalIcon />
-          <span>{answer.capital}</span>
+          <span className={clsx(!answer.capital && "country-info-pale")}>
+            {answer.capital ?? "N/A"}
+          </span>
         </div>
         <div>
           <PopulationIcon />

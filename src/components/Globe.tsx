@@ -28,13 +28,19 @@ interface Props {
 export const Globe = ({ selectedCountry }: Props) => {
   const [style, setStyle] = useState({});
   const [map, setMap] = useState<JSX.Element | undefined>(undefined);
+  const [canDisplay, setCanDisplay] = useState(false);
 
   useEffect(() => {
     const countryEntry = country.find(
       (country) => country.id === selectedCountry
     );
 
-    if (!countryEntry) return;
+    if (!countryEntry) {
+      setCanDisplay(false);
+      return;
+    }
+
+    setCanDisplay(true);
 
     const box = svgPathBbox(countryEntry.shape);
 
@@ -109,23 +115,27 @@ export const Globe = ({ selectedCountry }: Props) => {
         height: windowSize.y + "px",
       }}
     >
-      <div
-        className="globe"
-        style={{
-          width: mapSize.width + "px",
-          height: mapSize.height + "px",
-        }}
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width={mapSize.width}
-          height={mapSize.height}
-          viewBox={`0 0 ${svgSize.x} ${svgSize.y}`}
-          style={style}
+      {canDisplay ? (
+        <div
+          className="globe"
+          style={{
+            width: mapSize.width + "px",
+            height: mapSize.height + "px",
+          }}
         >
-          {map}
-        </svg>
-      </div>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width={mapSize.width}
+            height={mapSize.height}
+            viewBox={`0 0 ${svgSize.x} ${svgSize.y}`}
+            style={style}
+          >
+            {map}
+          </svg>
+        </div>
+      ) : (
+        <span className="globe-na">Not available</span>
+      )}
     </div>
   );
 };

@@ -82,7 +82,7 @@
       width: var(--minimap-size);
       height: var(--minimap-size);
       top: 50%;
-      right: 0;
+      right: -12px;
       transform: translate(0, -50%);
 
       border-radius: 8px;
