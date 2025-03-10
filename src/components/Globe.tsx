@@ -73,7 +73,7 @@ export const Globe = ({ selectedCountry }: Props) => {
               id={country.id}
               d={country.shape}
               style={{
-                fill: "var(--K300)",
+                fill: "var(--K200)",
                 stroke: "var(--K500)",
                 strokeWidth: 2 / scaleLevel,
               }}

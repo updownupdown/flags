@@ -1,0 +1,65 @@
+.header {
+  position: relative;
+  display: flex;
+  width: 100%;
+  margin-bottom: 20px;
+  padding: 12px;
+
+  border-bottom: 1px solid var(--K200);
+
+  &__left {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    gap: 4px;
+
+    h2 {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--K700);
+    }
+
+    &__info {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+
+      div {
+        display: flex;
+        gap: 4px;
+
+        span {
+          font-size: 14px;
+          font-weight: 600;
+          color: var(--K500);
+          line-height: 1;
+        }
+
+        button {
+          font-size: 14px;
+          font-weight: 800;
+          color: var(--accent);
+          line-height: 1;
+
+          &:hover {
+            color: var(--accent-hover);
+          }
+        }
+      }
+    }
+  }
+
+  .header-menu-btn {
+    svg {
+      width: 32px;
+      height: 32px;
+      fill: var(--accent);
+    }
+
+    &:disabled {
+      svg {
+        fill: var(--K400);
+      }
+    }
+  }
+}

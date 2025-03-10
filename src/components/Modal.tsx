@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import { Close as CloseIcon } from "../icons/Close";
 import "./Modal.scss";
+import clsx from "clsx";
 
 interface Props {
   isOpen: boolean;
@@ -37,7 +38,7 @@ export const Modal = ({
   if (!isOpen) return null;
 
   return (
-    <dialog ref={ref} onCancel={onClose} className={modalClass}>
+    <dialog ref={ref} onCancel={onClose} className={clsx("modal", modalClass)}>
       <div className="modal-header">
         <h2>{title}</h2>
         <button className="dialog-close-btn" onClick={onClose}>

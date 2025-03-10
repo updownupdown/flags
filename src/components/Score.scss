@@ -1,0 +1,84 @@
+.score {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+
+  .score-table {
+    display: flex;
+    flex-direction: column;
+
+    hr {
+      margin: 8px 0;
+    }
+
+    &__row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+
+      .score-table-cell {
+        display: flex;
+        padding: 8px 0;
+        font-weight: 600;
+
+        &--header {
+          font-weight: 800;
+        }
+
+        &--title {
+          flex: 1;
+          font-weight: 800;
+        }
+        &--score {
+          width: 200px;
+        }
+      }
+    }
+  }
+
+  .score-details {
+    display: flex;
+    gap: 12px;
+
+    span {
+      &:nth-child(1) {
+        width: 50px;
+        text-align: right;
+      }
+      &:nth-child(2),
+      &:nth-child(3) {
+        width: 20px;
+        text-align: center;
+      }
+      &:nth-child(2) {
+        color: var(--correct);
+      }
+      &:nth-child(3) {
+        color: var(--incorrect);
+      }
+    }
+  }
+}
+
+.confidence-bar {
+  $bar-height: 10px;
+
+  overflow: hidden;
+  position: relative;
+
+  width: 80px;
+  height: $bar-height;
+
+  border-radius: calc($bar-height / 2);
+  background: var(--K300);
+
+  &__indicator {
+    position: absolute;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    height: 100%;
+
+    background: var(--K700);
+  }
+}

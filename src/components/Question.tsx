@@ -7,17 +7,15 @@ import {
 } from "../data/countryList";
 import Flag from "react-world-flags";
 import "./Question.scss";
-import "./StatusBar.scss";
 import clsx from "clsx";
 import { ISettings } from "./Settings";
-import {
-  calculateAverage,
-  clamp,
-  formatPopulationNumber,
-  shuffleArray,
-} from "../utils/utils";
-import { defaultScore, Score } from "./Layout";
+import { clamp, formatPopulationNumber, shuffleArray } from "../utils/utils";
 import { Globe } from "./Globe";
+import { Capital as CapitalIcon } from "../icons/Capital";
+import { Flag as FlagIcon } from "../icons/Flag";
+import { Population as PopulationIcon } from "../icons/Population";
+import { WinRate as WinRateIcon } from "../icons/WinRate";
+import { ConfidenceBar, confidenceMag, Score } from "./Score";
 
 const minSkewedLookupRestriction = 5;
 const maxRecentLength = 5;
@@ -25,23 +23,14 @@ const delay = {
   correct: 750,
   incorrect: 3000,
 };
-const confidenceMag = 5;
 
 interface Props {
   settings: ISettings;
   score: Score;
   setScore: (score: Score) => void;
-  setIsSettingsModalOpen: (open: boolean) => void;
-  setIsListModalOpen: (open: boolean) => void;
 }
 
-export const Question = ({
-  settings,
-  score,
-  setScore,
-  setIsSettingsModalOpen,
-  setIsListModalOpen,
-}: Props) => {
+export const Question = ({ settings, score, setScore }: Props) => {
   const [answer, setAnswer] = useState<CountryData | undefined>(undefined);
   const [recentlySelected, setRecentlySelected] = useState<string[]>([]);
   const [eligibleCountries, setElibibleCountries] = useState<string[]>([]);
@@ -176,25 +165,40 @@ export const Question = ({
 
           if (!countryName) return null;
 
+          const isCorrect =
+            answerCorrect !== undefined && countryName.code === answer?.code;
+          const isIncorrect =
+            answerCorrect !== undefined &&
+            countryName.code === guess &&
+            answer?.code !== guess;
+          const isNeither =
+            answerCorrect !== undefined &&
+            countryName.code !== answer?.code &&
+            countryName.code !== guess;
+
           return (
             <button
               key={countryCode}
               className={clsx(
                 "answer-btn",
-                answerCorrect !== undefined &&
-                  countryName.code === answer?.code &&
-                  "answer-btn--correct",
-                answerCorrect !== undefined &&
-                  countryName.code === guess &&
-                  answer?.code !== guess &&
-                  "answer-btn--incorrect",
-                answerCorrect !== undefined &&
-                  countryName.code !== answer?.code &&
-                  countryName.code !== guess &&
-                  "answer-btn--neither"
+                isCorrect && "answer-btn--correct",
+                isIncorrect && "answer-btn--incorrect",
+                isNeither && "answer-btn--neither"
               )}
               onClick={() => setGuess(countryName.code)}
             >
+              {isCorrect && answerCorrect && (
+                <div
+                  className="answer-btn-bar answer-btn-bar--correct"
+                  style={{ animationDuration }}
+                />
+              )}
+              {isIncorrect && !answerCorrect && (
+                <div
+                  className="answer-btn-bar answer-btn-bar--incorrect"
+                  style={{ animationDuration }}
+                />
+              )}
               {countryName.name}
             </button>
           );
@@ -203,7 +207,7 @@ export const Question = ({
     );
   };
 
-  const ConfidenceInfo = () => {
+  const Confidence = () => {
     if (!answer) return null;
 
     const currentCountry = score.countries.find(
@@ -212,73 +216,38 @@ export const Question = ({
 
     if (!currentCountry) return null;
 
-    const confidenceLeft = Math.max(
-      10,
-      ((currentCountry.s + confidenceMag) / (confidenceMag * 2)) * 100
-    );
-
-    return (
-      <div className="confidence">
-        <span>Confidence</span>
-
-        <div className="confidence-bar">
-          <div className="confidence-bar__middle" />
-          <div
-            className="confidence-bar__indicator"
-            style={{
-              width: confidenceLeft + "%",
-              background:
-                confidenceLeft > 70
-                  ? "var(--correct)"
-                  : confidenceLeft < 30
-                  ? "var(--incorrect)"
-                  : "var(--orange)",
-            }}
-          />
-        </div>
-      </div>
-    );
+    return <ConfidenceBar confidence={currentCountry.s} />;
   };
 
   const CountryInfo = () => {
     if (!answer) return null;
 
     return (
-      <div className="country-stats">
-        <span className="country-stats__pop">
-          Pop: {formatPopulationNumber(answer.population)}
-        </span>
-        <span className="country-stats__capital">
-          Capital: {answer.capital}
-        </span>
+      <div className="country-info">
+        <div>
+          <FlagIcon />
+          <span className={clsx(!guess && "country-info-pale")}>
+            {!guess ? "???" : answer.name}
+          </span>
+        </div>
+        <div>
+          <CapitalIcon />
+          <span>{answer.capital}</span>
+        </div>
+        <div>
+          <PopulationIcon />
+          <span>{formatPopulationNumber(answer.population)}</span>
+        </div>
+        <div>
+          <WinRateIcon />
+          <Confidence />
+        </div>
       </div>
     );
   };
 
   const animationDuration =
     (answerCorrect ? delay.correct : delay.incorrect) / 1000 + "s";
-
-  const StatusBar = () => {
-    return (
-      <div
-        className={clsx(
-          "status-bar",
-          answerCorrect === true && "status-bar--correct",
-          answerCorrect === false && "status-bar--incorrect"
-        )}
-      >
-        {answerCorrect !== undefined && (
-          <>
-            <div
-              className="status-bar__progress"
-              style={{ animationDuration }}
-            />
-            <span>{answerCorrect ? "Correct!" : "Incorrect"}</span>
-          </>
-        )}
-      </div>
-    );
-  };
 
   const WrongGuessFlag = () => {
     if (guess === undefined || answerCorrect !== false) return null;
@@ -298,77 +267,22 @@ export const Question = ({
   return (
     <>
       <div className="question">
-        <div className="status__buttons">
-          <button
-            onClick={() => {
-              setIsSettingsModalOpen(true);
-            }}
-          >
-            Set Difficulty
-          </button>
-          <button
-            onClick={() => {
-              setIsListModalOpen(true);
-            }}
-          >
-            Flag List
-          </button>
-          <button
-            onClick={() => {
-              if (
-                window.confirm(
-                  "Are you sure you want to reset your score and progress?"
-                )
-              ) {
-                setScore(defaultScore());
-              }
-            }}
-          >
-            Reset score
-          </button>
-        </div>
-
-        <div className="status">
-          <div className="stat">
-            <span>Correct</span>
-            <span className="stat-col-correct">{score.correct}</span>
-          </div>
-
-          <div className="stat">
-            <span>Incorrect</span>
-            <span className="stat-col-incorrect">{score.incorrect}</span>
-          </div>
-
-          <div className="stat">
-            <span>Average</span>
-            <span className="stat-col-avg">
-              {Math.round(calculateAverage(score.correct, score.incorrect))}%
-            </span>
-          </div>
-
-          <StatusBar />
-        </div>
-
         <div className="question__country">
           <div className="question__country__top">
             <div className="question__country__top__left">
-              <div className="question__country__flag">
-                <Flag code={answer.code} />
-              </div>
+              <CountryInfo />
             </div>
             <div className="question__country__top__right">
               <Globe selectedCountry={answer.code} />
-
-              <WrongGuessFlag />
             </div>
           </div>
+
           <div className="question__country__bottom">
-            <div className="question__country__bottom__left">
-              <CountryInfo />
+            <div className="question__country__flag">
+              <Flag code={answer.code} />
             </div>
-            <div className="question__country__bottom__right">
-              <ConfidenceInfo />
-            </div>
+
+            <WrongGuessFlag />
           </div>
         </div>
 

@@ -1,93 +1,65 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { FlagTable } from "./FlagTable";
 import "./Layout.scss";
 import { Question } from "./Question";
 import { useLocalStorage } from "../hooks/useLocalStorage";
 import { defaultSettings, ISettings, Settings } from "./Settings";
-import { countryList } from "../data/countryList";
-import { Modal } from "./Modal";
+import { Header } from "./Header";
+import { ModalContext, Modals, ModalType } from "../context/ModalContext";
+import { defaultScore, Score, ScoreDetails } from "./Score";
+import { About } from "./About";
 
-interface ScoreCountry {
-  x: string;
-  c: number;
-  i: number;
-  s: number;
-}
-
-export interface Score {
-  correct: number;
-  incorrect: number;
-  countries: ScoreCountry[];
-}
-
-export function defaultScore() {
-  const countries = countryList.map((country) => ({
-    /** Country code */
-    x: country.code,
-    /** Correct guesses */
-    c: 0,
-    /** Incorrect guesses */
-    i: 0,
-    /** Confidence score */
-    s: 0,
-  }));
-
-  return {
-    correct: 0,
-    incorrect: 0,
-    countries,
-  };
-}
 export const Layout = () => {
   const [settings, setSettings] = useLocalStorage<ISettings>(
     "flagSettings",
     defaultSettings
   );
   const [score, setScore] = useLocalStorage<Score>("flagScore", defaultScore());
+  const [openModal, setOpenModal] = useState<ModalType | undefined>(undefined);
 
-  const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
-  const [isListModalOpen, setIsListModalOpen] = useState(false);
+  function onCloseModal() {
+    setOpenModal(undefined);
+  }
 
   return (
-    <>
+    <ModalContext.Provider
+      value={{
+        openModal,
+        setOpenModal,
+      }}
+    >
       <div className="layout">
         <div className="layout__center">
-          <Question
-            settings={settings}
-            score={score}
-            setScore={setScore}
-            setIsListModalOpen={setIsListModalOpen}
-            setIsSettingsModalOpen={setIsSettingsModalOpen}
-          />
+          <Header score={score} settings={settings} setScore={setScore} />
+
+          <Question settings={settings} score={score} setScore={setScore} />
         </div>
       </div>
 
-      <Modal
-        title="Difficulty"
-        isOpen={isSettingsModalOpen}
-        onClose={() => setIsSettingsModalOpen(false)}
-        modalClass="settings-modal"
-      >
+      {openModal === Modals.Settings && (
         <Settings
           settings={settings}
           setSettings={setSettings}
           setScore={setScore}
-          onClose={() => setIsSettingsModalOpen(false)}
+          onClose={onCloseModal}
         />
-      </Modal>
-
-      <Modal
-        title="Flag List"
-        isOpen={isListModalOpen}
-        onClose={() => setIsListModalOpen(false)}
-        modalClass="flags-modal"
-      >
+      )}
+      {openModal === Modals.FlagTable && (
         <FlagTable
           settings={settings}
           score={score}
           setSettings={setSettings}
+          onClose={onCloseModal}
         />
-      </Modal>
-    </>
+      )}
+      {openModal === Modals.ScoreDetails && (
+        <ScoreDetails
+          onClose={onCloseModal}
+          score={score}
+          settings={settings}
+        />
+      )}
+      {openModal === Modals.About && <About onClose={onCloseModal} />}
+    </ModalContext.Provider>
   );
 };
