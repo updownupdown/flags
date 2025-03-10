@@ -60,7 +60,7 @@ export const ConfidenceBar = ({ confidence }: ConfidenceBarProps) => {
               ? "var(--correct)"
               : confidenceLeft < 30
               ? "var(--incorrect)"
-              : "var(--orange)",
+              : "var(--K700)",
         }}
       />
     </div>
@@ -85,10 +85,24 @@ export const ScoreDetails = ({ onClose, score, settings }: Props) => {
   ) {
     return (
       <div className="score-details">
-        <span>{Math.round(calculateAverage(correct, incorrect))}%</span>
-        <span>{correct}</span>
-        <span>{correct + incorrect}</span>
-        {confidence !== undefined && <ConfidenceBar confidence={confidence} />}
+        <span className={clsx(correct === 0 && "score-details-pale")}>
+          {correct}
+        </span>
+        <span
+          className={clsx(correct + incorrect === 0 && "score-details-pale")}
+        >
+          {correct + incorrect}
+        </span>
+        <span
+          className={clsx(correct + incorrect === 0 && "score-details-pale")}
+        >
+          {Math.round(calculateAverage(correct, incorrect))}%
+        </span>
+        {confidence === undefined ? (
+          <div className="confidence-placeholder" />
+        ) : (
+          <ConfidenceBar confidence={confidence} />
+        )}
       </div>
     );
   }
@@ -103,17 +117,6 @@ export const ScoreDetails = ({ onClose, score, settings }: Props) => {
       <div className="score">
         <div className="score-table">
           <div className="score-table__row">
-            <div className="score-table-cell score-table-cell--header score-table-cell--title">
-              <span>Country</span>
-            </div>
-            <div className="score-table-cell score-table-cell--header score-table-cell--score">
-              <span>Score</span>
-            </div>
-          </div>
-
-          <hr />
-
-          <div className="score-table__row">
             <div className="score-table-cell score-table-cell--title">
               <span>Total</span>
             </div>
@@ -125,6 +128,15 @@ export const ScoreDetails = ({ onClose, score, settings }: Props) => {
           <hr />
 
           {countryList
+            .sort((a, b) => {
+              if (a.name < b.name) {
+                return -1;
+              }
+              if (a.name > b.name) {
+                return 1;
+              }
+              return 0;
+            })
             .filter(
               (country) =>
                 showExcluded || country.population >= populationThreshold

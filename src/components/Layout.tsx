@@ -45,12 +45,7 @@ export const Layout = () => {
         />
       )}
       {openModal === Modals.FlagTable && (
-        <FlagTable
-          settings={settings}
-          score={score}
-          setSettings={setSettings}
-          onClose={onCloseModal}
-        />
+        <FlagTable settings={settings} onClose={onCloseModal} />
       )}
       {openModal === Modals.ScoreDetails && (
         <ScoreDetails

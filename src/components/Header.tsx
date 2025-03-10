@@ -20,7 +20,7 @@ export const Header = ({ score, settings, setScore }: Props) => {
   return (
     <div className="header">
       <div className="header__left">
-        <h2>Flags of the World</h2>
+        <h2>World Flags Quiz</h2>
         <div className="header__left__info">
           <div>
             <span>Difficulty:</span>

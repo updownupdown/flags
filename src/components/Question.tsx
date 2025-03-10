@@ -102,6 +102,7 @@ export const Question = ({ settings, score, setScore }: Props) => {
   // If has eligible countries, select a random one
   useEffect(() => {
     if (eligibleCountries.length) pickNextAnswer();
+    // eslint-disable-next-line
   }, [eligibleCountries]);
 
   // When showing answer
@@ -109,6 +110,7 @@ export const Question = ({ settings, score, setScore }: Props) => {
     if (answerCorrect === undefined) return;
 
     setTimeout(pickNextAnswer, answerCorrect ? delay.correct : delay.incorrect);
+    // eslint-disable-next-line
   }, [answerCorrect]);
 
   // React to guess
@@ -149,6 +151,7 @@ export const Question = ({ settings, score, setScore }: Props) => {
     }
     recentList.push(answer.code);
     setRecentlySelected(recentList);
+    // eslint-disable-next-line
   }, [guess]);
 
   const AnswerButtons = () => {

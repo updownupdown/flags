@@ -1,3 +1,7 @@
+.score-modal {
+  width: 500px;
+}
+
 .score {
   display: flex;
   flex-direction: column;
@@ -19,18 +23,10 @@
       .score-table-cell {
         display: flex;
         padding: 8px 0;
-        font-weight: 600;
-
-        &--header {
-          font-weight: 800;
-        }
+        font-weight: 800;
 
         &--title {
           flex: 1;
-          font-weight: 800;
-        }
-        &--score {
-          width: 200px;
         }
       }
     }
@@ -38,24 +34,34 @@
 
   .score-details {
     display: flex;
-    gap: 12px;
+    align-items: center;
+    gap: 10px;
 
     span {
-      &:nth-child(1) {
+      &:nth-child(3) {
         width: 50px;
         text-align: right;
       }
-      &:nth-child(2),
-      &:nth-child(3) {
-        width: 20px;
+      &:nth-child(1),
+      &:nth-child(2) {
+        width: 24px;
         text-align: center;
       }
-      &:nth-child(2) {
+      &:nth-child(1) {
         color: var(--correct);
       }
-      &:nth-child(3) {
+      &:nth-child(2) {
         color: var(--incorrect);
       }
+
+      &.score-details-pale {
+        color: var(--K200);
+      }
+    }
+
+    .confidence-placeholder,
+    .confidence-bar {
+      width: 60px;
     }
   }
 }
