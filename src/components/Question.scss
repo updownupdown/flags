@@ -18,13 +18,16 @@
     height: 100%;
 
     &__top {
+      $top-gap: 12px;
+
       display: flex;
       align-items: center;
       width: 100%;
       gap: 12px;
 
       &__left {
-        flex: 1;
+        // Required for span ellipses to work
+        width: calc(100% - var(--minimap-size) - $top-gap);
       }
 
       &__right {
@@ -131,14 +134,24 @@
       gap: 8px;
 
       svg {
+        flex-shrink: 0;
         width: 20px;
         height: 20px;
         fill: var(--K700);
       }
       span {
+        $height: 20px;
+
+        height: $height;
+
         font-size: 14px;
         font-weight: 800;
         color: var(--K700);
+
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        line-height: $height;
 
         &.country-info-pale {
           color: var(--K300);
