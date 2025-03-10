@@ -44,23 +44,28 @@ interface ConfidenceBarProps {
 export const confidenceMag = 5;
 
 export const ConfidenceBar = ({ confidence }: ConfidenceBarProps) => {
-  const confidenceLeft = Math.max(
+  const percentage = Math.max(
     10,
     ((confidence + confidenceMag) / (confidenceMag * 2)) * 100
   );
+
+  let background = "var(--K700)";
+
+  if (percentage < 40) {
+    background = "var(--incorrect)";
+  } else if (percentage < 50) {
+    background = "var(--orange)";
+  } else if (percentage > 70) {
+    background = "var(--correct)";
+  }
 
   return (
     <div className="confidence-bar">
       <div
         className="confidence-bar__indicator"
         style={{
-          width: confidenceLeft + "%",
-          background:
-            confidenceLeft > 70
-              ? "var(--correct)"
-              : confidenceLeft < 30
-              ? "var(--incorrect)"
-              : "var(--K700)",
+          width: percentage + "%",
+          background,
         }}
       />
     </div>

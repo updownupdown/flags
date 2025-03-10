@@ -79,8 +79,8 @@ export const Globe = ({ selectedCountry }: Props) => {
               id={country.id}
               d={country.shape}
               style={{
-                fill: "var(--K200)",
-                stroke: "var(--K500)",
+                fill: "var(--map-country)",
+                stroke: "var(--map-country-border)",
                 strokeWidth: 2 / scaleLevel,
               }}
             />
@@ -96,8 +96,8 @@ export const Globe = ({ selectedCountry }: Props) => {
               id={country.id}
               d={country.shape}
               style={{
-                fill: "var(--accent)",
-                stroke: "var(--accent-hover)",
+                fill: "var(--map-selected)",
+                stroke: "var(--map-selected-border)",
                 strokeWidth: 3 / scaleLevel,
               }}
             />

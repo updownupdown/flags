@@ -20,7 +20,7 @@ import { ConfidenceBar, confidenceMag, Score } from "./Score";
 const minSkewedLookupRestriction = 5;
 const maxRecentLength = 5;
 const delay = {
-  correct: 750,
+  correct: 450,
   incorrect: 3000,
 };
 
