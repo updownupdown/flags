@@ -4,6 +4,8 @@ import { calculateAverage } from "../utils/utils";
 import { Modal } from "./Modal";
 import "./Score.scss";
 import { Difficulties, DifficultyPops, ISettings } from "./Settings";
+import Flag from "react-world-flags";
+import { useState } from "react";
 
 interface ScoreCountry {
   x: string;
@@ -81,7 +83,6 @@ interface Props {
 export const ScoreDetails = ({ onClose, score, settings }: Props) => {
   const populationThreshold =
     DifficultyPops[settings.difficulty as Difficulties];
-  const showExcluded = false;
 
   function scoreDisplay(
     correct: number,
@@ -112,6 +113,58 @@ export const ScoreDetails = ({ onClose, score, settings }: Props) => {
     );
   }
 
+  const scoredList = () => {
+    const list: {
+      name: string;
+      code: string;
+      correct: number;
+      incorrect: number;
+      average: number;
+      confidence: number;
+    }[] = [];
+
+    countryList.forEach((country) => {
+      if (country.population < populationThreshold) return;
+
+      const countryScore = score.countries.find((c) => c.x === country.code);
+
+      if (!countryScore) return;
+
+      list.push({
+        name: country.name,
+        code: country.code,
+        correct: countryScore.c,
+        incorrect: countryScore.i,
+        average: Math.round(calculateAverage(countryScore.c, countryScore.i)),
+        confidence: countryScore.s,
+      });
+    });
+
+    list
+      .sort((a, b) => {
+        if (a.name < b.name) {
+          return -1;
+        }
+        if (a.name > b.name) {
+          return 1;
+        }
+        return 0;
+      })
+      .sort((a, b) => {
+        if (a.confidence < b.confidence) {
+          return -1;
+        }
+        if (a.confidence > b.confidence) {
+          return 1;
+        }
+        return 0;
+      });
+
+    return list;
+  };
+
+  const [selected, setSelected] = useState<string | undefined>(undefined);
+
   return (
     <Modal
       title="Score Details"
@@ -119,9 +172,11 @@ export const ScoreDetails = ({ onClose, score, settings }: Props) => {
       onClose={onClose}
       modalClass="score-modal"
     >
+      <div className="modal-message">Click on a country to show its flag.</div>
+
       <div className="score">
         <div className="score-table">
-          <div className="score-table__row">
+          <div className="score-table__row score-table__row--total">
             <div className="score-table-cell score-table-cell--title">
               <span>Total</span>
             </div>
@@ -132,44 +187,37 @@ export const ScoreDetails = ({ onClose, score, settings }: Props) => {
 
           <hr />
 
-          {countryList
-            .sort((a, b) => {
-              if (a.name < b.name) {
-                return -1;
-              }
-              if (a.name > b.name) {
-                return 1;
-              }
-              return 0;
-            })
-            .filter(
-              (country) =>
-                showExcluded || country.population >= populationThreshold
-            )
-            .map((country) => {
-              if (!score.countries) return null;
+          {scoredList().map((country) => {
+            const isSelected = country.code === selected;
 
-              const countryScore = score.countries.find(
-                (c) => c.x === country.code
-              );
-
-              if (!country || !countryScore) return null;
-
-              return (
-                <div key={country.code} className="score-table__row">
-                  <div className="score-table-cell score-table-cell--title">
-                    <span>{country.name}</span>
+            return (
+              <div
+                key={country.name}
+                className={clsx(
+                  "score-table__row",
+                  isSelected && "score-table__row--selected"
+                )}
+                onClick={() => setSelected(country.code)}
+              >
+                {isSelected && (
+                  <div className="score-table-info">
+                    <Flag code={country.code} />
                   </div>
-                  <div className="score-table-cell score-table-cell--score">
-                    {scoreDisplay(
-                      countryScore.c,
-                      countryScore.i,
-                      countryScore.s
-                    )}
-                  </div>
+                )}
+
+                <div className="score-table-cell score-table-cell--title">
+                  <span>{country.name}</span>
                 </div>
-              );
-            })}
+                <div className="score-table-cell score-table-cell--score">
+                  {scoreDisplay(
+                    country.correct,
+                    country.incorrect,
+                    country.confidence
+                  )}
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
     </Modal>

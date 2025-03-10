@@ -12,35 +12,6 @@
   row-gap: 40px;
   padding: 20px;
 
-  .flag-table-message {
-    display: flex;
-    align-items: center;
-    width: 100%;
-    gap: 20px;
-
-    padding: 20px;
-
-    border-radius: 12px;
-    background: var(--K100);
-
-    text-align: center;
-
-    @media (max-width: 800px) {
-      flex-direction: column;
-    }
-
-    span {
-      font-size: 16px;
-      color: var(--K700);
-      font-weight: 700;
-      line-height: 1.3;
-    }
-
-    .toggle-group {
-      gap: unset;
-    }
-  }
-
   &__country {
     display: flex;
     flex-direction: column;

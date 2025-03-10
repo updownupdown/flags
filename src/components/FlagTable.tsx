@@ -31,11 +31,9 @@ export const FlagTable = ({ settings, onClose }: Props) => {
   return (
     <Modal title="Flag List" isOpen onClose={onClose} modalClass="flags-modal">
       <div className="flag-table">
-        <div className="flag-table-message">
-          <span>
-            {excludedCountries} countries we excluded due to the selected
-            difficult level.
-          </span>
+        <div className="modal-message">
+          {excludedCountries} countries we excluded due to the selected
+          difficult level.
         </div>
 
         {filteredCountries.map((country) => {
