@@ -5,16 +5,17 @@
   align-items: center;
   width: 100%;
   height: 100%;
-  max-height: 800px;
+  max-height: 700px;
   gap: 12px;
+  padding: 20px 30px 30px;
 
   &__country {
     display: flex;
     flex-direction: column;
     justify-content: center;
+    align-content: space-around;
     width: 100%;
     height: 100%;
-    gap: 30px;
 
     &__top {
       display: flex;
@@ -38,16 +39,9 @@
     }
 
     &__bottom {
-      // position:relative;
+      position: relative;
       display: flex;
-      // align-items: center;
-      // justify-content: center;
-    }
-
-    span {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--K600);
+      flex: 1;
     }
 
     &__flag {
@@ -58,7 +52,7 @@
 
       img {
         width: 100%;
-        height: 180px;
+        height: 200px;
         object-fit: contain;
         filter: drop-shadow(1px 2px 4px var(--K400))
           drop-shadow(2px 4px 16px var(--K300));
@@ -69,7 +63,16 @@
         @media (max-height: 700px) {
           height: 120px;
         }
+        @media (max-height: 600px) {
+          height: 100px;
+        }
       }
+    }
+
+    span {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--K600);
     }
 
     .other-flag {
@@ -79,8 +82,8 @@
       width: var(--minimap-size);
       height: var(--minimap-size);
       top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
+      right: 0;
+      transform: translate(0, -50%);
 
       border-radius: 8px;
       background: var(--white);
