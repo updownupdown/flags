@@ -49,6 +49,7 @@ export const Menu = ({ onClose, setScore }: Props) => {
                 )
               ) {
                 setScore(defaultScore());
+                onClose();
               }
             }}
           >

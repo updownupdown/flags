@@ -81,6 +81,8 @@ interface Props {
 }
 
 export const ScoreDetails = ({ onClose, score, settings }: Props) => {
+  console.log(score.countries);
+
   const populationThreshold =
     DifficultyPops[settings.difficulty as Difficulties];
 
@@ -94,10 +96,8 @@ export const ScoreDetails = ({ onClose, score, settings }: Props) => {
         <span className={clsx(correct === 0 && "score-details-pale")}>
           {correct}
         </span>
-        <span
-          className={clsx(correct + incorrect === 0 && "score-details-pale")}
-        >
-          {correct + incorrect}
+        <span className={clsx(incorrect === 0 && "score-details-pale")}>
+          {incorrect}
         </span>
         <span
           className={clsx(correct + incorrect === 0 && "score-details-pale")}
