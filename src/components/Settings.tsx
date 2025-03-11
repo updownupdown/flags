@@ -44,18 +44,14 @@ export const defaultSettings: ISettings = {
   showExcludedFlags: "true",
 };
 
-export const Settings = ({
-  settings,
-  setSettings,
-  setScore,
-  onClose,
-}: Props) => {
+export const Settings = ({ settings, setSettings, onClose }: Props) => {
   const [difficulty, setDifficulty] = useState<Difficulties>(
     settings["difficulty"] as Difficulties
   );
 
   useEffect(() => {
     setSettings({ ...settings, difficulty });
+    // eslint-disable-next-line
   }, [difficulty]);
 
   const numCountriesForLevel = getCountryCodesWithDifficulty(difficulty).length;
@@ -65,7 +61,6 @@ export const Settings = ({
     <Modal
       title="Difficulty"
       isOpen
-      // isOpen={isSettingsModalOpen}
       onClose={onClose}
       modalClass="settings-modal"
     >

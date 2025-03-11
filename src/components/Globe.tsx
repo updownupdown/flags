@@ -71,7 +71,7 @@ export const Globe = ({ selectedCountry }: Props) => {
       <>
         {country.map((country) => {
           // Always draw non-selected countries first, for z-index
-          if (selectedCountry === country.id) return;
+          if (selectedCountry === country.id) return null;
 
           return (
             <path
@@ -88,7 +88,7 @@ export const Globe = ({ selectedCountry }: Props) => {
         })}
         {country.map((country) => {
           // Always draw selected countries last, for z-index
-          if (selectedCountry !== country.id) return;
+          if (selectedCountry !== country.id) return null;
 
           return (
             <path
