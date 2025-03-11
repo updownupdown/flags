@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef } from "react";
+import { useContext } from "react";
 import "./Menu.scss";
 import { ModalContext, Modals } from "../context/ModalContext";
 import { defaultScore, Score } from "./Score";

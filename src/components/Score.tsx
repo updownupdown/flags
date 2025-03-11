@@ -81,8 +81,6 @@ interface Props {
 }
 
 export const ScoreDetails = ({ onClose, score, settings }: Props) => {
-  console.log(score.countries);
-
   const populationThreshold =
     DifficultyPops[settings.difficulty as Difficulties];
 
