@@ -32,7 +32,12 @@ export const Layout = () => {
         <div className="layout__center">
           <Header score={score} settings={settings} setScore={setScore} />
 
-          <Question settings={settings} score={score} setScore={setScore} />
+          <Question
+            settings={settings}
+            score={score}
+            setScore={setScore}
+            setSettings={setSettings}
+          />
         </div>
       </div>
 

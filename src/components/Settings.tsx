@@ -18,6 +18,7 @@ interface Props {
 
 export interface ISettings {
   difficulty: string;
+  mode: string;
   showExcludedFlags: string;
 }
 
@@ -31,6 +32,14 @@ export const Difficulty = {
 
 export type Difficulties = ValueOf<typeof Difficulty>;
 
+export const Mode = {
+  PickName: "Pick the name",
+  PickFlag: "Pick the flag",
+  TypeName: "Type the name",
+} as const;
+
+export type Modes = ValueOf<typeof Mode>;
+
 export const DifficultyPops: Record<Difficulties, number> = {
   [Difficulty.VeryEasy]: 50000000,
   [Difficulty.Easy]: 10000000,
@@ -41,6 +50,7 @@ export const DifficultyPops: Record<Difficulties, number> = {
 
 export const defaultSettings: ISettings = {
   difficulty: Difficulty.Easy,
+  mode: Mode.PickName,
   showExcludedFlags: "true",
 };
 
@@ -48,23 +58,35 @@ export const Settings = ({ settings, setSettings, onClose }: Props) => {
   const [difficulty, setDifficulty] = useState<Difficulties>(
     settings["difficulty"] as Difficulties
   );
+  const [mode, setMode] = useState<Modes>(settings["mode"] as Modes);
 
   useEffect(() => {
-    setSettings({ ...settings, difficulty });
+    setSettings({ ...settings, difficulty, mode });
     // eslint-disable-next-line
-  }, [difficulty]);
+  }, [difficulty, mode]);
 
   const numCountriesForLevel = getCountryCodesWithDifficulty(difficulty).length;
   const populationForLevel = formatPopulationNumber(DifficultyPops[difficulty]);
 
   return (
     <Modal
-      title="Difficulty"
+      title="Settings"
       isOpen
       onClose={onClose}
       modalClass="settings-modal"
     >
       <div className="settings">
+        <ToggleGroup label="Mode" isVertical>
+          {Object.values(Mode).map((m) => (
+            <Toggle
+              key={m}
+              label={m}
+              isCurrent={mode === m}
+              onClick={() => setMode(m as Modes)}
+            />
+          ))}
+        </ToggleGroup>
+
         <ToggleGroup label="Difficulty" isVertical>
           {Object.values(Difficulty).map((diff) => (
             <Toggle

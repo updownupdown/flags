@@ -23,7 +23,7 @@ $theme-colors: (
   "accent": #3a8aa7,
   "accent-hover": #1b6079,
   "orange": #f9a42d,
-  "map-water": #e0f4fb,
+  "map-water": #e9f6fa,
   "map-country": #b9cec0,
   "map-country-border": #8ea696,
   "map-selected": #177637,
@@ -67,7 +67,8 @@ body {
 
 body,
 button,
-a {
+a,
+input {
   font-family: var(--font);
 }
 

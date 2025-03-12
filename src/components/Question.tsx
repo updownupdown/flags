@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   CountryData,
   countryList,
@@ -8,7 +8,7 @@ import {
 import Flag from "react-world-flags";
 import "./Question.scss";
 import clsx from "clsx";
-import { ISettings } from "./Settings";
+import { ISettings, Mode } from "./Settings";
 import { clamp, formatPopulationNumber, shuffleArray } from "../utils/utils";
 import { Globe } from "./Globe";
 import { Capital as CapitalIcon } from "../icons/Capital";
@@ -16,6 +16,7 @@ import { Flag as FlagIcon } from "../icons/Flag";
 import { Population as PopulationIcon } from "../icons/Population";
 import { WinRate as WinRateIcon } from "../icons/WinRate";
 import { ConfidenceBar, confidenceMag, Score } from "./Score";
+import { Close as CloseIcon } from "../icons/Close";
 
 const minSkewedLookupRestriction = 5;
 const maxRecentLength = 5;
@@ -28,6 +29,7 @@ interface Props {
   settings: ISettings;
   score: Score;
   setScore: (score: Score) => void;
+  setSettings: (settings: ISettings) => void;
 }
 
 export const Question = ({ settings, score, setScore }: Props) => {
@@ -151,15 +153,22 @@ export const Question = ({ settings, score, setScore }: Props) => {
     }
     recentList.push(answer.code);
     setRecentlySelected(recentList);
+
+    // Reset input
+    if (settings.mode === Mode.TypeName) {
+      resetInput();
+    }
+
     // eslint-disable-next-line
   }, [guess]);
 
   const AnswerButtons = () => {
     return (
       <div
-        className={`answer-btns answer-btns--show-${
-          answerCorrect !== undefined ? "true" : "false"
-        }`}
+        className={clsx(
+          "answer-btns",
+          `answer-btns--show-${answerCorrect !== undefined ? "true" : "false"}`
+        )}
       >
         {answerList.map((countryCode) => {
           const countryName = countryList.find(
@@ -202,7 +211,8 @@ export const Question = ({ settings, score, setScore }: Props) => {
                   style={{ animationDuration }}
                 />
               )}
-              {countryName.name}
+              {settings.mode === Mode.PickName && countryName.name}
+              {settings.mode === Mode.PickFlag && <Flag code={countryCode} />}
             </button>
           );
         })}
@@ -229,9 +239,15 @@ export const Question = ({ settings, score, setScore }: Props) => {
       <div className="country-info">
         <div>
           <FlagIcon />
-          <span className={clsx(!guess && "country-info-pale")}>
-            {!guess ? "???" : answer.name}
-          </span>
+          {(settings.mode === Mode.PickName ||
+            settings.mode === Mode.TypeName) && (
+            <span className={clsx(!guess && "country-info-pale")}>
+              {!guess ? "???" : answer.name}
+            </span>
+          )}
+          {settings.mode === Mode.PickFlag && (
+            <span className="country-info-large">{answer.name}</span>
+          )}
         </div>
         <div>
           <CapitalIcon />
@@ -267,11 +283,85 @@ export const Question = ({ settings, score, setScore }: Props) => {
     );
   };
 
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [inputValue, setInputValue] = useState("");
+  const [typingMatches, setTypingMatches] = useState<
+    { code: string; name: string }[]
+  >([]);
+
+  function resetInput(refocus = true) {
+    setInputValue("");
+    setTypingMatches([]);
+    setSelectedMatch(0);
+
+    refocus && inputRef.current?.focus();
+  }
+
+  useEffect(() => {
+    if (inputValue === "") {
+      if (typingMatches.length) setTypingMatches([]);
+      return;
+    }
+
+    const matches = countryList
+      .filter(
+        (country) =>
+          country.name.substring(0, inputValue.length).toLowerCase() ===
+          inputValue.toLowerCase()
+      )
+      .sort((a, b) => {
+        if (a.name < b.name) {
+          return -1;
+        }
+        if (a.name > b.name) {
+          return 1;
+        }
+        return 0;
+      })
+      .slice(0, 3);
+
+    setTypingMatches(matches);
+  }, [inputValue]);
+
+  // useEffect(() => {
+  //   if (
+  //     typingMatches.length === 1 &&
+  //     autoPressMatch &&
+  //     inputValue.length >= 3
+  //   ) {
+  //     setGuess(typingMatches[0].code);
+  //   }
+  // }, [typingMatches]);
+
+  const [selectedMatch, setSelectedMatch] = useState(0);
+  // const [autoPressMatch, setAutoPressMatch] = useState(true);
+
+  function handleInputKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key === "Enter") {
+      setGuess(typingMatches[selectedMatch].code);
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      const newMatch = Math.max(selectedMatch - 1, 0);
+      setSelectedMatch(newMatch);
+    } else if (e.key === "ArrowDown") {
+      e.preventDefault();
+      const newMatch = Math.min(selectedMatch + 1, typingMatches.length);
+      setSelectedMatch(newMatch);
+    }
+  }
+
   if (answer === undefined) return null;
 
   return (
     <>
-      <div className="question">
+      <div
+        className={clsx(
+          "question",
+          settings.mode === Mode.PickName && "question--mode-name",
+          settings.mode === Mode.PickFlag && "question--mode-flag",
+          settings.mode === Mode.TypeName && "question--mode-type"
+        )}
+      >
         <div className="question__country">
           <div className="question__country__top">
             <div className="question__country__top__left">
@@ -282,16 +372,90 @@ export const Question = ({ settings, score, setScore }: Props) => {
             </div>
           </div>
 
-          <div className="question__country__bottom">
-            <div className="question__country__flag">
-              <Flag code={answer.code} />
-            </div>
+          {(settings.mode === Mode.PickName ||
+            settings.mode === Mode.TypeName) && (
+            <div className="question__country__bottom">
+              <div className="question__country__flag">
+                <Flag code={answer.code} />
+              </div>
 
-            <WrongGuessFlag />
-          </div>
+              <WrongGuessFlag />
+            </div>
+          )}
         </div>
 
-        <AnswerButtons />
+        {(settings.mode === Mode.PickName ||
+          settings.mode === Mode.PickFlag) && <AnswerButtons />}
+
+        {settings.mode === Mode.TypeName && (
+          <div className="question-typing">
+            <div className="question-typing__input">
+              {guess && (
+                <div
+                  className={`question-typing-result question-typing-result--${
+                    answerCorrect ? "correct" : "incorrect"
+                  }`}
+                >
+                  <div
+                    className={`question-typing-result__bar question-typing-result--${
+                      answerCorrect ? "correct" : "incorrect"
+                    }`}
+                    style={{ animationDuration }}
+                  />
+                  <span>{answerCorrect ? "Correct" : "Incorrect"}</span>
+                </div>
+              )}
+
+              {typingMatches.length !== 0 && (
+                <div className="question-typing__input__matches">
+                  {typingMatches.map((match, i) => (
+                    <button
+                      key={match.code}
+                      onClick={() => setGuess(match.code)}
+                      className={
+                        selectedMatch === i
+                          ? "match-btn--selected"
+                          : "match-btn--unselected"
+                      }
+                    >
+                      {match.name}
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              <input
+                ref={inputRef}
+                value={inputValue}
+                type="text"
+                onKeyDown={(e) => handleInputKeyDown(e)}
+                onChange={(e) => {
+                  setInputValue(e.target.value);
+                }}
+              />
+
+              {inputValue !== "" && (
+                <button
+                  className="question-typing-clear"
+                  onClick={() => {
+                    resetInput(false);
+                  }}
+                >
+                  <CloseIcon />
+                </button>
+              )}
+            </div>
+
+            {/* <label className="auto-pick">
+              <input
+                type="checkbox"
+                checked={autoPressMatch}
+                onChange={() => setAutoPressMatch(!autoPressMatch)}
+              />
+              Auto-pick country for unique matches
+            </label> */}
+          </div>
+        )}
       </div>
     </>
   );

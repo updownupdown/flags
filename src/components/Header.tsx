@@ -23,9 +23,9 @@ export const Header = ({ score, settings, setScore }: Props) => {
         <h2>World Flags Quiz</h2>
         <div className="header__left__info">
           <div>
-            <span>Difficulty:</span>
+            <span>Mode:</span>
             <button onClick={() => setOpenModal(Modals.Settings)}>
-              {settings.difficulty}
+              {settings.mode}, {settings.difficulty}
             </button>
           </div>
           <div>
