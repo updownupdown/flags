@@ -19,7 +19,6 @@ interface Props {
 export interface ISettings {
   difficulty: string;
   mode: string;
-  showExcludedFlags: string;
 }
 
 export const Difficulty = {
@@ -51,7 +50,6 @@ export const DifficultyPops: Record<Difficulties, number> = {
 export const defaultSettings: ISettings = {
   difficulty: Difficulty.Easy,
   mode: Mode.PickName,
-  showExcludedFlags: "true",
 };
 
 export const Settings = ({ settings, setSettings, onClose }: Props) => {
@@ -61,7 +59,7 @@ export const Settings = ({ settings, setSettings, onClose }: Props) => {
   const [mode, setMode] = useState<Modes>(settings["mode"] as Modes);
 
   useEffect(() => {
-    setSettings({ ...settings, difficulty, mode });
+    setSettings({ difficulty, mode });
     // eslint-disable-next-line
   }, [difficulty, mode]);
 

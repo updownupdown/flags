@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FlagTable } from "./FlagTable";
 import "./Layout.scss";
 import { Question } from "./Question";
@@ -16,6 +16,14 @@ export const Layout = () => {
   );
   const [score, setScore] = useLocalStorage<Score>("flagScore", defaultScore());
   const [openModal, setOpenModal] = useState<ModalType | undefined>(undefined);
+
+  useEffect(() => {
+    setSettings({
+      difficulty: settings.difficulty ?? defaultSettings.difficulty,
+      mode: settings.mode ?? defaultSettings.mode,
+    });
+    // eslint-disable-next-line
+  }, []);
 
   function onCloseModal() {
     setOpenModal(undefined);
