@@ -15,5 +15,9 @@
     max-width: 400px;
     height: 100vh;
     height: 100dvh;
+
+    @media (min-height: 900px) {
+      justify-content: center;
+    }
   }
 }

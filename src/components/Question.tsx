@@ -17,6 +17,7 @@ import { Population as PopulationIcon } from "../icons/Population";
 import { WinRate as WinRateIcon } from "../icons/WinRate";
 import { ConfidenceBar, confidenceMag, Score } from "./Score";
 import { Close as CloseIcon } from "../icons/Close";
+import { useLocalStorage } from "../hooks/useLocalStorage";
 
 const minSkewedLookupRestriction = 5;
 const maxRecentLength = 5;
@@ -33,6 +34,11 @@ interface Props {
 }
 
 export const Question = ({ settings, score, setScore }: Props) => {
+  const [lastAnswer, setLastAnswer] = useLocalStorage<CountryData | undefined>(
+    "flagLastAnswer",
+    undefined
+  );
+
   const [answer, setAnswer] = useState<CountryData | undefined>(undefined);
   const [recentlySelected, setRecentlySelected] = useState<string[]>([]);
   const [eligibleCountries, setElibibleCountries] = useState<string[]>([]);
@@ -86,26 +92,29 @@ export const Question = ({ settings, score, setScore }: Props) => {
   }
 
   function pickNextAnswer() {
-    const country = getRandomCountry();
+    // Pick the last saved answer on load, if appropriate
+    const country = !answer && lastAnswer ? lastAnswer : getRandomCountry();
 
     if (!country) return;
 
     setGuess(undefined);
     setAnswerCorrect(undefined);
     setAnswer(country);
+    setLastAnswer(country);
     getRandomAnswers(country.code);
   }
 
-  // Set list of eligible countries
+  // Update answer when settings change
   useEffect(() => {
-    setElibibleCountries(getCountryCodesWithSettings(settings));
-  }, [settings]);
+    const elibibleCountries = getCountryCodesWithSettings(settings);
 
-  // If has eligible countries, select a random one
-  useEffect(() => {
-    if (eligibleCountries.length) pickNextAnswer();
+    setElibibleCountries(elibibleCountries);
+
+    if (eligibleCountries.length) {
+      pickNextAnswer();
+    }
     // eslint-disable-next-line
-  }, [eligibleCountries]);
+  }, [settings]);
 
   // When showing answer
   useEffect(() => {
@@ -237,7 +246,7 @@ export const Question = ({ settings, score, setScore }: Props) => {
 
     return (
       <div className="country-info">
-        <div>
+        <div className="country-info__info country-info__info--name">
           <FlagIcon />
           {(settings.mode === Mode.PickName ||
             settings.mode === Mode.TypeName) && (
@@ -249,17 +258,17 @@ export const Question = ({ settings, score, setScore }: Props) => {
             <span className="country-info-large">{answer.name}</span>
           )}
         </div>
-        <div>
+        <div className="country-info__info country-info__info--capital">
           <CapitalIcon />
           <span className={clsx(!answer.capital && "country-info-pale")}>
             {answer.capital ?? "N/A"}
           </span>
         </div>
-        <div>
+        <div className="country-info__info country-info__info--pop">
           <PopulationIcon />
           <span>{formatPopulationNumber(answer.population)}</span>
         </div>
-        <div>
+        <div className="country-info__info country-info__info--confidence">
           <WinRateIcon />
           <Confidence />
         </div>
@@ -321,20 +330,10 @@ export const Question = ({ settings, score, setScore }: Props) => {
       .slice(0, 3);
 
     setTypingMatches(matches);
+    // eslint-disable-next-line
   }, [inputValue]);
 
-  // useEffect(() => {
-  //   if (
-  //     typingMatches.length === 1 &&
-  //     autoPressMatch &&
-  //     inputValue.length >= 3
-  //   ) {
-  //     setGuess(typingMatches[0].code);
-  //   }
-  // }, [typingMatches]);
-
   const [selectedMatch, setSelectedMatch] = useState(0);
-  // const [autoPressMatch, setAutoPressMatch] = useState(true);
 
   function handleInputKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
     if (e.key === "Enter") {
@@ -379,7 +378,7 @@ export const Question = ({ settings, score, setScore }: Props) => {
                 <Flag code={answer.code} />
               </div>
 
-              <WrongGuessFlag />
+              {settings.mode !== Mode.TypeName && <WrongGuessFlag />}
             </div>
           )}
         </div>
@@ -391,18 +390,18 @@ export const Question = ({ settings, score, setScore }: Props) => {
           <div className="question-typing">
             <div className="question-typing__input">
               {guess && (
-                <div
-                  className={`question-typing-result question-typing-result--${
-                    answerCorrect ? "correct" : "incorrect"
-                  }`}
-                >
+                <div className="question-typing-result-wrap">
                   <div
-                    className={`question-typing-result__bar question-typing-result--${
+                    className={`question-typing-result question-typing-result--${
                       answerCorrect ? "correct" : "incorrect"
                     }`}
-                    style={{ animationDuration }}
-                  />
-                  <span>{answerCorrect ? "Correct" : "Incorrect"}</span>
+                  >
+                    <div
+                      className="question-typing-result__bar"
+                      style={{ animationDuration }}
+                    />
+                    <span>{answer.name}</span>
+                  </div>
                 </div>
               )}
 
@@ -432,6 +431,7 @@ export const Question = ({ settings, score, setScore }: Props) => {
                 onChange={(e) => {
                   setInputValue(e.target.value);
                 }}
+                placeholder="Enter country name..."
               />
 
               {inputValue !== "" && (
@@ -445,15 +445,6 @@ export const Question = ({ settings, score, setScore }: Props) => {
                 </button>
               )}
             </div>
-
-            {/* <label className="auto-pick">
-              <input
-                type="checkbox"
-                checked={autoPressMatch}
-                onChange={() => setAutoPressMatch(!autoPressMatch)}
-              />
-              Auto-pick country for unique matches
-            </label> */}
           </div>
         )}
       </div>

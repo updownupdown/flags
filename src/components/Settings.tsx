@@ -59,7 +59,9 @@ export const Settings = ({ settings, setSettings, onClose }: Props) => {
   const [mode, setMode] = useState<Modes>(settings["mode"] as Modes);
 
   useEffect(() => {
-    setSettings({ difficulty, mode });
+    if (difficulty !== settings.difficulty || mode !== settings.mode) {
+      setSettings({ difficulty, mode });
+    }
     // eslint-disable-next-line
   }, [difficulty, mode]);
 

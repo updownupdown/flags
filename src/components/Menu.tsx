@@ -23,7 +23,7 @@ export const Menu = ({ onClose, setScore }: Props) => {
               setOpenModal(Modals.Settings);
             }}
           >
-            Select difficulty
+            Set mode and difficulty
           </button>
           <button
             onClick={() => {
@@ -31,7 +31,7 @@ export const Menu = ({ onClose, setScore }: Props) => {
               setOpenModal(Modals.FlagTable);
             }}
           >
-            Flags list
+            Flag list
           </button>
           <button
             onClick={() => {

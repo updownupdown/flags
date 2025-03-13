@@ -22,13 +22,13 @@ export const Header = ({ score, settings, setScore }: Props) => {
       <div className="header__left">
         <h2>World Flags Quiz</h2>
         <div className="header__left__info">
-          <div>
+          <div className="header__left__info__settings">
             <span>Mode:</span>
             <button onClick={() => setOpenModal(Modals.Settings)}>
-              {settings.mode}, {settings.difficulty}
+              {settings.mode} ({settings.difficulty})
             </button>
           </div>
-          <div>
+          <div className="header__left__info__win">
             <span>Win:</span>
             <button onClick={() => setOpenModal(Modals.ScoreDetails)}>
               {Math.round(calculateAverage(score.correct, score.incorrect))}%

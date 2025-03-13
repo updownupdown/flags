@@ -1,8 +1,9 @@
 .header {
   position: relative;
   display: flex;
+  align-items: center;
   width: 100%;
-  padding: 20px 20px 20px 30px;
+  padding: 20px 10px 20px 30px;
   flex-shrink: 0;
 
   border-bottom: 1px solid var(--K200);
@@ -45,11 +46,19 @@
             color: var(--accent-hover);
           }
         }
+
+        @media (max-width: 420px) {
+          &.header__left__info__win {
+            display: none;
+          }
+        }
       }
     }
   }
 
   .header-menu-btn {
+    display: flex;
+
     svg {
       width: 32px;
       height: 32px;
