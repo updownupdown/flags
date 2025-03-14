@@ -438,33 +438,43 @@ export const Question = ({ settings, score, setScore }: Props) => {
                           : "match-btn--unselected"
                       }
                     >
-                      {match.name}
+                      <b>{match.name.substring(0, inputValue.length)}</b>
+                      {match.name.substring(
+                        inputValue.length,
+                        match.name.length
+                      )}
                     </button>
                   ))}
                 </div>
               )}
 
-              <input
-                ref={inputRef}
-                value={inputValue}
-                type="text"
-                onKeyDown={(e) => handleInputKeyDown(e)}
-                onChange={(e) => {
-                  setInputValue(e.target.value);
-                }}
-                disabled={useMobileKeyboard}
-                placeholder="Enter country name..."
-              />
+              {!useMobileKeyboard && (
+                <>
+                  <input
+                    className={`question-input question-input--${
+                      inputValue.length === 0 ? "empty" : "not-empty"
+                    }`}
+                    ref={inputRef}
+                    value={inputValue}
+                    type="text"
+                    onKeyDown={(e) => handleInputKeyDown(e)}
+                    onChange={(e) => {
+                      setInputValue(e.target.value);
+                    }}
+                    placeholder="Enter country name..."
+                  />
 
-              {inputValue !== "" && (
-                <button
-                  className="question-typing-clear"
-                  onClick={() => {
-                    resetInput(false);
-                  }}
-                >
-                  <CloseIcon />
-                </button>
+                  {inputValue !== "" && (
+                    <button
+                      className="question-typing-clear"
+                      onClick={() => {
+                        resetInput(false);
+                      }}
+                    >
+                      <CloseIcon />
+                    </button>
+                  )}
+                </>
               )}
             </div>
 

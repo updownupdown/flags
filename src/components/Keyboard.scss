@@ -86,12 +86,12 @@
 }
 
 .keyboard {
-  $key-gap: 4px;
+  $key-gap: 6px;
   $max-keys-per-row: 10;
   $key-width: calc(
     (100% / $max-keys-per-row) - $key-gap / ($max-keys-per-row - 1)
   );
-  $key-height: 40px;
+  $key-height: 54px;
 
   display: flex;
   flex-direction: column;
@@ -99,7 +99,7 @@
   gap: $key-gap;
 
   .kb-row {
-    $offset: 20px;
+    $offset: 36px;
 
     display: flex;
     gap: $key-gap;
