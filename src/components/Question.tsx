@@ -18,6 +18,7 @@ import { WinRate as WinRateIcon } from "../icons/WinRate";
 import { ConfidenceBar, confidenceMag, Score } from "./Score";
 import { Close as CloseIcon } from "../icons/Close";
 import { useLocalStorage } from "../hooks/useLocalStorage";
+import { Keyboard } from "./Keyboard";
 
 const minSkewedLookupRestriction = 5;
 const maxRecentLength = 5;
@@ -31,6 +32,11 @@ interface Props {
   score: Score;
   setScore: (score: Score) => void;
   setSettings: (settings: ISettings) => void;
+}
+
+export interface TypingMatch {
+  code: string;
+  name: string;
 }
 
 export const Question = ({ settings, score, setScore }: Props) => {
@@ -294,9 +300,7 @@ export const Question = ({ settings, score, setScore }: Props) => {
 
   const inputRef = useRef<HTMLInputElement>(null);
   const [inputValue, setInputValue] = useState("");
-  const [typingMatches, setTypingMatches] = useState<
-    { code: string; name: string }[]
-  >([]);
+  const [typingMatches, setTypingMatches] = useState<TypingMatch[]>([]);
 
   function resetInput(refocus = true) {
     setInputValue("");
@@ -348,6 +352,23 @@ export const Question = ({ settings, score, setScore }: Props) => {
       setSelectedMatch(newMatch);
     }
   }
+
+  function pickSelectedMatch() {
+    setGuess(typingMatches[selectedMatch].code);
+  }
+
+  const [useMobileKeyboard, setUseMobileKeyboard] = useState(false);
+
+  useEffect(() => {
+    const updateMobileKeyboard = () => {
+      setUseMobileKeyboard(window.innerHeight < 900 && window.innerWidth < 600);
+    };
+
+    updateMobileKeyboard();
+    window.addEventListener("resize", updateMobileKeyboard);
+
+    return () => window.removeEventListener("resize", updateMobileKeyboard);
+  }, []);
 
   if (answer === undefined) return null;
 
@@ -431,6 +452,7 @@ export const Question = ({ settings, score, setScore }: Props) => {
                 onChange={(e) => {
                   setInputValue(e.target.value);
                 }}
+                disabled={useMobileKeyboard}
                 placeholder="Enter country name..."
               />
 
@@ -445,6 +467,15 @@ export const Question = ({ settings, score, setScore }: Props) => {
                 </button>
               )}
             </div>
+
+            {useMobileKeyboard && (
+              <Keyboard
+                inputValue={inputValue}
+                setInputValue={setInputValue}
+                pickSelectedMatch={pickSelectedMatch}
+                typingMatches={typingMatches}
+              />
+            )}
           </div>
         )}
       </div>
