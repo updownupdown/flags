@@ -376,6 +376,11 @@ export const Question = ({ settings, score, setScore }: Props) => {
             <div className="question__country__bottom">
               <div className="question__country__flag">
                 <Flag code={answer.code} />
+
+                <div className="question__country__flag__capital">
+                  <CapitalIcon />
+                  <span>{answer.capital ?? "N/A"}</span>
+                </div>
               </div>
 
               {settings.mode !== Mode.TypeName && <WrongGuessFlag />}

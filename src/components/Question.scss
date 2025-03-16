@@ -21,6 +21,12 @@ $border-radius: 8px;
     width: 100%;
     height: 100%;
 
+    span {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--K600);
+    }
+
     &__top {
       $top-gap: 12px;
 
@@ -31,24 +37,9 @@ $border-radius: 8px;
 
       // Only show capital when typing on small screens
       // Capital is needed to differentiate between some flags
-      @at-root .question--mode-type &#{&} {
-        @media (max-height: 480px) {
-          .question__country__top {
-            &__left {
-              width: 100%;
-
-              .country-info__info:not(.country-info__info--capital) {
-                display: none;
-              }
-              .country-info__info--capital {
-                align-items: center;
-                justify-content: center;
-              }
-            }
-            &__right {
-              display: none;
-            }
-          }
+      @media (max-height: 480px) {
+        @at-root .question--mode-type .question__country__top {
+          display: none;
         }
       }
 
@@ -75,9 +66,11 @@ $border-radius: 8px;
 
     &__flag {
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
       width: 100%;
+      gap: 12px;
 
       img {
         width: 100%;
@@ -98,23 +91,41 @@ $border-radius: 8px;
       }
 
       @at-root .question--mode-type &#{&} {
-        align-items: flex-start;
+        justify-content: flex-start;
         padding: 30px 0 20px;
 
         @media (max-height: 480px) {
-          padding: 16px 0 0;
+          padding: 0;
 
           img {
             height: 120px;
           }
         }
       }
-    }
 
-    span {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--K600);
+      &__capital {
+        display: none;
+        align-items: center;
+        gap: 6px;
+
+        @media (max-height: 480px) {
+          @at-root .question--mode-type &#{&} {
+            display: flex;
+          }
+        }
+
+        svg {
+          flex-shrink: 0;
+          width: 20px;
+          height: 20px;
+          fill: var(--K700);
+        }
+        span {
+          font-size: 15px;
+          font-weight: 800;
+          color: var(--K700);
+        }
+      }
     }
 
     .other-flag {
@@ -194,7 +205,7 @@ $border-radius: 8px;
   }
 
   .answer-btns {
-    $col-gap: 12px;
+    $col-gap: 6px;
 
     display: flex;
 
@@ -367,7 +378,7 @@ $border-radius: 8px;
 
       font-size: 16px;
       font-weight: 700;
-      color: var(--K400);
+      color: var(--accent);
 
       &:hover {
         color: var(--accent-hover);
