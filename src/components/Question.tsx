@@ -424,6 +424,7 @@ export const Question = ({ settings, score, setScore }: Props) => {
               )}
 
               <input
+                autoComplete="nope"
                 ref={inputRef}
                 value={inputValue}
                 type="text"
@@ -447,12 +448,12 @@ export const Question = ({ settings, score, setScore }: Props) => {
 
                     overwriteValue += nextCorrectChar;
 
-                    console.log({ i, nextCorrectChar });
-
                     if (inputValue.charAt(i) !== nextCorrectChar) break;
                   }
 
                   setInputValue(overwriteValue);
+
+                  inputRef.current?.focus();
                 }}
               >
                 Hint
