@@ -434,6 +434,30 @@ export const Question = ({ settings, score, setScore }: Props) => {
                 placeholder="Enter country name..."
               />
 
+              <button
+                className="question-typing-hint"
+                onClick={() => {
+                  let overwriteValue = "";
+                  const inputLength = inputValue.length;
+
+                  for (let i = 0; i <= inputLength; i++) {
+                    const nextCorrectChar = answer?.name.charAt(i);
+
+                    if (nextCorrectChar === "") break;
+
+                    overwriteValue += nextCorrectChar;
+
+                    console.log({ i, nextCorrectChar });
+
+                    if (inputValue.charAt(i) !== nextCorrectChar) break;
+                  }
+
+                  setInputValue(overwriteValue);
+                }}
+              >
+                Hint
+              </button>
+
               {inputValue !== "" && (
                 <button
                   className="question-typing-clear"

@@ -1,4 +1,4 @@
-$matches-height: 42px;
+$matches-height: 50px;
 $matches-gap: 8px;
 $border-radius: 8px;
 
@@ -295,6 +295,8 @@ $border-radius: 8px;
 }
 
 .question-typing {
+  $hint-width: 60px;
+
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -305,8 +307,8 @@ $border-radius: 8px;
 
     input[type="text"] {
       transition: 0.1s ease all;
-      width: 100%;
-      height: 40px;
+      width: calc(100% - $hint-width);
+      height: $matches-height;
       padding: 8px 12px;
 
       font-size: 18px;
@@ -338,7 +340,7 @@ $border-radius: 8px;
     .question-typing-clear {
       position: absolute;
       top: 50%;
-      right: 10px;
+      right: calc(10px + $hint-width);
       transform: translateY(-50%);
       display: flex;
 
@@ -350,6 +352,25 @@ $border-radius: 8px;
 
       &:hover svg {
         fill: var(--incorrect);
+      }
+    }
+
+    .question-typing-hint {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: $hint-width;
+      height: $matches-height;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--K400);
+
+      &:hover {
+        color: var(--accent-hover);
       }
     }
 
