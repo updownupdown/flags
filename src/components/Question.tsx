@@ -17,6 +17,7 @@ import { Population as PopulationIcon } from "../icons/Population";
 import { WinRate as WinRateIcon } from "../icons/WinRate";
 import { ConfidenceBar, confidenceMag, Score } from "./Score";
 import { Close as CloseIcon } from "../icons/Close";
+import { Region as RegionIcon } from "../icons/Region";
 import { useLocalStorage } from "../hooks/useLocalStorage";
 
 const minSkewedLookupRestriction = 5;
@@ -104,17 +105,17 @@ export const Question = ({ settings, score, setScore }: Props) => {
     getRandomAnswers(country.code);
   }
 
-  // Update answer when settings change
+  // Update eligible countries when settings change
   useEffect(() => {
-    const elibibleCountries = getCountryCodesWithSettings(settings);
-
-    setElibibleCountries(elibibleCountries);
-
-    if (eligibleCountries.length) {
-      pickNextAnswer();
-    }
+    setElibibleCountries(getCountryCodesWithSettings(settings));
     // eslint-disable-next-line
   }, [settings]);
+
+  // Update answer when eligible countries change
+  useEffect(() => {
+    pickNextAnswer();
+    // eslint-disable-next-line
+  }, [eligibleCountries]);
 
   // When showing answer
   useEffect(() => {
@@ -263,6 +264,10 @@ export const Question = ({ settings, score, setScore }: Props) => {
           <span className={clsx(!answer.capital && "country-info-pale")}>
             {answer.capital ?? "N/A"}
           </span>
+        </div>
+        <div className="country-info__info country-info__info--region">
+          <RegionIcon />
+          <span>{answer.subregion}</span>
         </div>
         <div className="country-info__info country-info__info--pop">
           <PopulationIcon />

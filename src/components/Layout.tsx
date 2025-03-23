@@ -21,6 +21,7 @@ export const Layout = () => {
     setSettings({
       difficulty: settings.difficulty ?? defaultSettings.difficulty,
       mode: settings.mode ?? defaultSettings.mode,
+      region: settings.region ?? defaultSettings.region,
     });
     // eslint-disable-next-line
   }, []);

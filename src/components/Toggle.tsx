@@ -1,21 +1,25 @@
 import clsx from "clsx";
 import "./Toggle.scss";
+import React from "react";
 
 export interface ToggleGroupProps {
   label: string;
   children: React.ReactNode;
   isVertical?: boolean;
+  className?: string;
 }
 
 export const ToggleGroup = ({
   label,
   children,
   isVertical,
+  className,
 }: ToggleGroupProps) => {
   return (
     <div
       className={clsx(
         "toggle-group",
+        className,
         isVertical ? "toggle-group--vertical" : "toggle-group--horizontal"
       )}
     >
@@ -30,6 +34,7 @@ export interface ToggleProps {
   isCurrent: boolean;
   onClick: () => void;
   disabled?: boolean;
+  children?: React.ReactNode;
 }
 
 export const Toggle = ({
@@ -37,6 +42,7 @@ export const Toggle = ({
   isCurrent,
   onClick,
   disabled,
+  children,
 }: ToggleProps) => {
   return (
     <button
@@ -46,7 +52,7 @@ export const Toggle = ({
         !isCurrent && onClick();
       }}
     >
-      {label}
+      {children ?? label}
     </button>
   );
 };

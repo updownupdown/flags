@@ -2,6 +2,8 @@ import {
   Difficulties,
   DifficultyPops,
   ISettings,
+  Region,
+  Regions,
 } from "../components/Settings";
 
 export interface CountryData {
@@ -17,14 +19,25 @@ export interface CountryData {
   small?: boolean;
 }
 
-export function getCountryCodesWithDifficulty(difficulty: Difficulties) {
+export function getCountryCodesWithDifficulty(
+  difficulty: Difficulties,
+  region: Regions
+) {
   return countryList
-    .filter((country) => country.population >= DifficultyPops[difficulty])
+    .filter(
+      (country) =>
+        (country.region === region || region === Region.All) &&
+        (country.population >= DifficultyPops[difficulty] ||
+          region !== Region.All)
+    )
     .map((country) => country.code);
 }
 
 export function getCountryCodesWithSettings(settings: ISettings) {
-  return getCountryCodesWithDifficulty(settings.difficulty as Difficulties);
+  return getCountryCodesWithDifficulty(
+    settings.difficulty as Difficulties,
+    settings.region as Regions
+  );
 }
 
 export function getCountryInfo(countryCode: string) {
