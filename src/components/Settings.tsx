@@ -128,7 +128,7 @@ export const Settings = ({ settings, setSettings, onClose }: Props) => {
           </Toggle>
         </ToggleGroup>
 
-        <div className="region-toggle">
+        <div className="select-toggle">
           <label>
             <span>Region</span>
             <select
@@ -146,33 +146,38 @@ export const Settings = ({ settings, setSettings, onClose }: Props) => {
         </div>
 
         {region === Region.All && (
-          <ToggleGroup
-            label="Difficulty"
-            isVertical
-            className="difficulty-toggle"
-          >
-            {Object.values(Difficulty).map((diff) => (
-              <Toggle
-                key={diff}
-                label={diff}
-                isCurrent={difficulty === diff}
-                onClick={() => setDifficulty(diff as Difficulties)}
-              />
-            ))}
-          </ToggleGroup>
+          <div className="select-toggle">
+            <label>
+              <span>Difficulty</span>
+              <select
+                name="Difficulty"
+                value={difficulty}
+                onChange={(e) => setDifficulty(e.target.value as Difficulties)}
+              >
+                {Object.values(Difficulty).map((difficulty) => (
+                  <option key={difficulty} value={difficulty}>
+                    {difficulty}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
         )}
 
         <span className="settings-pop-hint">
           {DifficultyPops[difficulty] === 0 ? (
-            `Includes all ${countryList.length} countries`
+            <>
+              <span>Includes all {countryList.length} countries</span>
+              <span></span>
+            </>
           ) : (
             <>
               <span>{`Includes ${numCountriesForLevel} countries`}</span>
               {region === Region.All ? (
-                <span>{`(population of over ${populationForLevel})`}</span>
+                <span>{`(with a population of over ${populationForLevel})`}</span>
               ) : (
                 <span>
-                  (selection "All" region to set difficulty by population level)
+                  Select "All" region to set difficulty by population level.
                 </span>
               )}
             </>

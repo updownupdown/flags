@@ -56,6 +56,7 @@
     }
 
     &:disabled {
+      opacity: 0.4;
       cursor: default;
       color: var(--K400);
       border-color: var(--K200);
