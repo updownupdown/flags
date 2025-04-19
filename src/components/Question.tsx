@@ -113,6 +113,8 @@ export const Question = ({ settings, score, setScore }: Props) => {
 
   // Update answer when eligible countries change
   useEffect(() => {
+    if (eligibleCountries.length === 0) return;
+
     pickNextAnswer();
     // eslint-disable-next-line
   }, [eligibleCountries]);
